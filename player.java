@@ -9,8 +9,14 @@ import javax.imageio.ImageIO;
 import java.awt.geom.AffineTransform;
 import java.awt.Graphics2D;
 public class player{
-  public int animate = 0;
-  public float termVelx = 10;
+  public boolean lookingUp;
+  public boolean updir;
+  public boolean downdir;
+  public boolean leftdir;
+  public boolean rightdir;
+  public int animateRun = 0;
+  public int animatefast = 0;
+  public float termVelx = 15;
   public float termVely = 10;
   public float width = 1;
   public float height = 1;
@@ -30,64 +36,85 @@ public class player{
       loadImage();
   }
   private void loadImage() {
-      try {
-          // you can use just the filename if the image file is in your
-          // project folder, otherwise you need to provide the file path.
-          image = ImageIO.read(new File("Sonic_Prime_Test_Sprites_-_Sprite_Sheet.png")).getSubimage(9,26,43,43);
-      } catch (IOException exc) {
-          System.out.println("Error opening image file: " + exc.getMessage());
-      }
+      setimage(9,26,43,43);
   }
   private void animate_run_right(){
     facing_left = false;
-    try {
-      image = ImageIO.read(new File("Sonic_Prime_Test_Sprites_-_Sprite_Sheet.png")).getSubimage(9 + 63 * animate,110,43,43);
-    } catch (IOException exc) {
-        System.out.println("Error opening image file: " + exc.getMessage());
-    }
-    animate++;
-    if(animate > 7){
-      animate = 0;
+    setimage(9 + 63 * animateRun,110,43,43);
+    animateRun++;
+    if(animateRun > 7){
+      animateRun = 0;
     }
   }
   private void animate_run_left(){
     facing_left = true;
+    setimage(9 + 63 * animateRun,110,43,43);
+    mirror_image();
+    animateRun++;
+    if(animateRun > 7){
+      animateRun = 0;
+    }
+  }
+  private void animate_run_fast_right(){
+    facing_left = false;
+    setimage(529 + 63 * animatefast,110,43,43);
+    animatefast++;
+    if(animatefast > 3){
+      animatefast = 0;
+    }
+  }
+  private void animate_run_fast_left(){
+    facing_left = true;
+    setimage(529 + 63 * animatefast,110,43,43);
+    mirror_image();
+    animatefast++;
+    if(animatefast > 3){
+      animatefast = 0;
+    }
+  }
+  private void animate_looking_up(){
+    if((velx > -.2 && velx < .2) && (vely < .5 && vely > -.5)){
+      if(!lookingUp){
+        setimage(688,26,43,43);
+        if(facing_left){
+          mirror_image();
+        }
+        lookingUp = true;
+      }
+      else if(lookingUp){
+        setimage(688 + 63,26,43,43);
+        if(facing_left){
+          mirror_image();
+        }
+      }
+    }
+    else{
+      lookingUp = false;
+    }
+  }
+  private void animate_still(){
+    setimage(9,26,43,43);
+    if(facing_left){
+        mirror_image();
+    }
+  }
+  private void setimage(int x, int y, int w, int h){
     try {
-      image = ImageIO.read(new File("Sonic_Prime_Test_Sprites_-_Sprite_Sheet.png")).getSubimage(9 + 63 * animate,110,43,43);
-      AffineTransform at = new AffineTransform();
+        image = ImageIO.read(new File("Sonic_Prime_Test_Sprites_-_Sprite_Sheet.png")).getSubimage(x,y,w,h);
+    } catch (IOException exc) {
+        System.out.println("Error opening image file: " + exc.getMessage());
+    }
+  }
+  private void mirror_image(){
+    AffineTransform at = new AffineTransform();
         at.concatenate(AffineTransform.getScaleInstance(1, -1));
         at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()));
       image = createTransformed(image, at);
       at = AffineTransform.getRotateInstance(
           Math.PI, image.getWidth()/2, image.getHeight()/2.0);
       image = createTransformed(image, at);
-    } catch (IOException exc) {
-        System.out.println("Error opening image file: " + exc.getMessage());
-    }
-    animate++;
-    if(animate > 7){
-      animate = 0;
-    }
   }
-  private void animate_still(){
-    try {
-        image = ImageIO.read(new File("Sonic_Prime_Test_Sprites_-_Sprite_Sheet.png")).getSubimage(9,26,43,43);
-    } catch (IOException exc) {
-        System.out.println("Error opening image file: " + exc.getMessage());
-    }
-    if(facing_left){
-        AffineTransform at = new AffineTransform();
-          at.concatenate(AffineTransform.getScaleInstance(1, -1));
-          at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()));
-        image = createTransformed(image, at);
-        at = AffineTransform.getRotateInstance(
-            Math.PI, image.getWidth()/2, image.getHeight()/2.0);
-        image = createTransformed(image, at);
-    }
-  }
-  private static BufferedImage createTransformed(
-      BufferedImage image, AffineTransform at)
-  {
+  private static BufferedImage createTransformed(BufferedImage image, AffineTransform at){
       BufferedImage newImage = new BufferedImage(
           image.getWidth(), image.getHeight(),
           BufferedImage.TYPE_INT_ARGB);
@@ -138,23 +165,49 @@ public class player{
   }
   public void tick(){
     setpos(posx + velx, posy + vely);
-    if(vely < -1){
-      try {
-          image = ImageIO.read(new File("Sonic_Prime_Test_Sprites_-_Sprite_Sheet.png")).getSubimage(971,26,43,43);
-      } catch (IOException exc) {
-          System.out.println("Error opening image file: " + exc.getMessage());
+    if(vely < -.1){
+      setimage(971,26,43,43);
+      if(facing_left){
+        mirror_image();
       }
     }
     else if(velx > .5){
-      animate_run_right();
+      if(velx > 9){
+        animate_run_fast_right();
+      }
+      else{
+        animate_run_right();
+      }
     }
     else if(velx < -.5){
-      animate_run_left();
+      if(velx < -9){
+        animate_run_fast_left();
+      }
+      else{
+        animate_run_left();
+      }
     }
     else{
       animate_still();
     }
-    setvel(velx * (float).95, vely + (float).4);
+    if(updir){
+      animate_looking_up();
+    }
+    else{
+      lookingUp = false;
+    }
+    if(velx > 0){
+      facing_left = false;
+    }
+    else if (velx < 0){
+      facing_left = true;
+    }
+    if(velx < 2 && velx > -2 && (!leftdir && !rightdir) && !(leftdir && rightdir)){
+      setvel(velx * (float).5, vely + (float).4);
+    }
+    else{
+      setvel(velx * (float).95, vely + (float).4);
+    }
     /*if(posx < 0){
       setpos(500, posy);
     }*/
@@ -169,6 +222,10 @@ public class player{
     }
   }
   public void input(boolean up, boolean left, boolean down, boolean right, boolean space, boolean shift){
+    updir = up;
+    downdir = down;
+    leftdir = left;
+    rightdir = right;
     if(up){
       //setvel(velx, vely - 10);
     }
@@ -176,17 +233,22 @@ public class player{
       setvel(velx, vely + (float).5);
     }
     if(left && !right){
-      setvel(velx - (float).5,vely);
+      setvel(velx - (float).7,vely);
     }
     if(right && !left){
-      setvel(velx + (float).5,vely);
+      setvel(velx + (float).7,vely);
     }
     if(shift){
       setvel(0,0);
     }
     if(space){
       if(isOnGround){
-        setvel(velx, vely - 10);
+        if(lookingUp){
+          setvel(velx, vely - 15);
+        }
+        else{
+          setvel(velx, vely - (float)7.5);
+        }
       }
     }
   }

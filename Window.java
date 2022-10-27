@@ -51,9 +51,9 @@ public class Window extends JPanel implements ActionListener, KeyListener {
         timer.start();
 
         obstacle[0] = new ground();
-        obstacle[0].setCollision(100, 100, 300, 200);
+        obstacle[0].setCollision(100, 100, 1000, 200);
         obstacle[1] = new ground();
-        obstacle[1].setCollision(-100, 200, 100, 300);
+        obstacle[1].setCollision(-1000, 200, 100, 300);
     }
 
     @Override
