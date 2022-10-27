@@ -29,6 +29,7 @@ public class ground{
         if(p.right - left > p.bottom - top){
           p.setpos(p.posx, top - p.height / 2);
           p.setvel(p.velx, 0);
+          p.isOnGround = true;
         }
         if(p.right - left < p.bottom - top){
           p.setpos(left - p.width / 2, p.posy);
@@ -49,6 +50,7 @@ public class ground{
         if(right - p.left > p.bottom - top){
           p.setpos(p.posx, top - p.height / 2);
           p.setvel(p.velx, 0);
+          p.isOnGround = true;
         }
         if(right - p.left < p.bottom - top){
           p.setpos(right + p.width / 2, p.posy);
@@ -76,6 +78,7 @@ public class ground{
       else if(p.bottom > top && p.top < top){
         p.setpos(p.posx, top - p.height / 2);
         p.setvel(p.velx, 0);
+        p.isOnGround = true;
       }
       else if(bottom > p.top && p.bottom > bottom){
         p.setpos(p.posx, bottom + p.height / 2);

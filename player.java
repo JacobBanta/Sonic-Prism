@@ -22,6 +22,7 @@ public class player{
   public float bottom;
   public float left;
   public float right;
+  public boolean isOnGround = false;
   private BufferedImage image;
   public boolean facing_left;
   public player() {
@@ -137,7 +138,14 @@ public class player{
   }
   public void tick(){
     setpos(posx + velx, posy + vely);
-    if(velx > .5){
+    if(vely < -1){
+      try {
+          image = ImageIO.read(new File("Sonic_Prime_Test_Sprites_-_Sprite_Sheet.png")).getSubimage(971,26,43,43);
+      } catch (IOException exc) {
+          System.out.println("Error opening image file: " + exc.getMessage());
+      }
+    }
+    else if(velx > .5){
       animate_run_right();
     }
     else if(velx < -.5){
@@ -162,7 +170,7 @@ public class player{
   }
   public void input(boolean up, boolean left, boolean down, boolean right, boolean space, boolean shift){
     if(up){
-      setvel(velx, vely - 10);
+      //setvel(velx, vely - 10);
     }
     if(down){
       setvel(velx, vely + (float).5);
@@ -177,7 +185,9 @@ public class player{
       setvel(0,0);
     }
     if(space){
-      setvel(velx, vely - 10);
+      if(isOnGround){
+        setvel(velx, vely - 10);
+      }
     }
   }
     //w = 87 a = 65 s = 83 d = 68 space = 32 shift = 16 ctrl = 17 alt = 18

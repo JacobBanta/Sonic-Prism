@@ -64,6 +64,7 @@ public class Window extends JPanel implements ActionListener, KeyListener {
 
         // prevent the player from disappearing off the board
         Player.tick();
+        Player.isOnGround = false;
         for(int x = 0; x < obstacle.length; x++){
           obstacle[x].checkCollision(Player);
         }
