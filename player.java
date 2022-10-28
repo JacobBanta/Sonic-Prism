@@ -9,13 +9,16 @@ import javax.imageio.ImageIO;
 import java.awt.geom.AffineTransform;
 import java.awt.Graphics2D;
 public class player{
+  public int stillTimer = 0;
   public boolean lookingUp;
   public boolean updir;
   public boolean downdir;
   public boolean leftdir;
   public boolean rightdir;
+  public int animateIdle = 0;
   public int animateRun = 0;
   public int animatefast = 0;
+  public int animateTurn = 0;
   public float termVelx = 15;
   public float termVely = 10;
   public float width = 1;
@@ -106,6 +109,33 @@ public class player{
         mirror_image();
     }
   }
+  //animates the idle motion
+  private void animate_idle(){
+    setimage(88 + 63 * (int)(animateIdle / 4),26,43,43);
+    animateIdle++;
+    if(animateIdle > 19){
+      animateIdle = 0;
+    }
+  }
+  private void animate_turn_left(){
+    setimage(797 + 63 * animateTurn,110,43,43);
+    animateTurn++;
+    if(animateTurn > 3){
+      animateTurn = 0;
+      setvel(0, vely);
+      facing_left = true;
+    }
+  }
+  private void animate_turn_right(){
+    setimage(797 + 63 * animateTurn,110,43,43);
+    mirror_image();
+    animateTurn++;
+    if(animateTurn > 3){
+      animateTurn = 0;
+      setvel(0, vely);
+      facing_left = false;
+    }
+  }
   //invoked for setting the image
   private void setimage(int x, int y, int w, int h){
     try {
@@ -188,7 +218,7 @@ public class player{
         mirror_image();
       }
     }
-    else if(velx > .5){
+    else if(velx > .5 && ((!leftdir && rightdir) || (!rightdir && !leftdir))){
       if(velx > 9){
         animate_run_fast_right();
       }
@@ -196,7 +226,7 @@ public class player{
         animate_run_right();
       }
     }
-    else if(velx < -.5){
+    else if(velx < -.5 && ((leftdir && !rightdir) || (!rightdir && !leftdir))){
       if(velx < -9){
         animate_run_fast_left();
       }
@@ -205,7 +235,13 @@ public class player{
       }
     }
     else{
+      if(vely < .5){
+        stillTimer++;
+      }
       animate_still();
+    }
+    if(stillTimer > 120){
+      animate_idle();
     }
     if(updir){
       animate_looking_up();
@@ -237,6 +273,15 @@ public class player{
     if(posy > 500){
       setpos(posx, 0);
     }
+    if(velx < -4 && velx > -8 && rightdir && !leftdir){
+      animate_turn_right();
+    }
+    else if(velx > 4 && velx < 8 && !rightdir && leftdir){
+      animate_turn_left();
+    }
+    else{
+      animateTurn = 0;
+    }
   }
   //reacts to the keys being pressed
   public void input(boolean up, boolean left, boolean down, boolean right, boolean space, boolean shift){
@@ -245,21 +290,27 @@ public class player{
     leftdir = left;
     rightdir = right;
     if(up){
+      stillTimer = 0;
       //setvel(velx, vely - 10);
     }
     if(down){
+      stillTimer = 0;
       setvel(velx, vely + (float).5);
     }
     if(left && !right){
+      stillTimer = 0;
       setvel(velx - (float).7,vely);
     }
     if(right && !left){
+      stillTimer = 0;
       setvel(velx + (float).7,vely);
     }
     if(shift){
+      stillTimer = 0;
       setvel(0,0);
     }
     if(space){
+      stillTimer = 0;
       if(isOnGround){
         if(lookingUp){
           setvel(velx, vely - 15);

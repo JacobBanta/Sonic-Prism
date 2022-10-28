@@ -4,7 +4,7 @@ class Main {
 
     private static void initWindow() {
         // create a window frame and set the title in the toolbar
-        JFrame window = new JFrame("testrun");
+        JFrame window = new JFrame("sonic i guess");
         // when we close the window, stop the app
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
