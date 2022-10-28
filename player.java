@@ -31,13 +31,16 @@ public class player{
   public boolean isOnGround = false;
   private BufferedImage image;
   public boolean facing_left;
+  //class construtor(called when player is created)
   public player() {
       // load the assets
       loadImage();
   }
+  //loads the base image
   private void loadImage() {
       setimage(9,26,43,43);
   }
+  //animates the basic movement for the right direction
   private void animate_run_right(){
     facing_left = false;
     setimage(9 + 63 * animateRun,110,43,43);
@@ -46,6 +49,7 @@ public class player{
       animateRun = 0;
     }
   }
+  //animates the basic movement for the left direction
   private void animate_run_left(){
     facing_left = true;
     setimage(9 + 63 * animateRun,110,43,43);
@@ -55,6 +59,7 @@ public class player{
       animateRun = 0;
     }
   }
+  //animates the full speed movement for the right direction
   private void animate_run_fast_right(){
     facing_left = false;
     setimage(529 + 63 * animatefast,110,43,43);
@@ -63,6 +68,7 @@ public class player{
       animatefast = 0;
     }
   }
+  //animates the full speed movement for the left direction
   private void animate_run_fast_left(){
     facing_left = true;
     setimage(529 + 63 * animatefast,110,43,43);
@@ -72,6 +78,7 @@ public class player{
       animatefast = 0;
     }
   }
+  //animates the looking up motion
   private void animate_looking_up(){
     if((velx > -.2 && velx < .2) && (vely < .5 && vely > -.5)){
       if(!lookingUp){
@@ -92,12 +99,14 @@ public class player{
       lookingUp = false;
     }
   }
+  //sets the image to be standing still
   private void animate_still(){
     setimage(9,26,43,43);
     if(facing_left){
         mirror_image();
     }
   }
+  //invoked for setting the image
   private void setimage(int x, int y, int w, int h){
     try {
         image = ImageIO.read(new File("Sonic_Prime_Test_Sprites_-_Sprite_Sheet.png")).getSubimage(x,y,w,h);
@@ -105,6 +114,7 @@ public class player{
         System.out.println("Error opening image file: " + exc.getMessage());
     }
   }
+  //invoked for mirroring the image(turning right to left)
   private void mirror_image(){
     AffineTransform at = new AffineTransform();
         at.concatenate(AffineTransform.getScaleInstance(1, -1));
@@ -114,6 +124,7 @@ public class player{
           Math.PI, image.getWidth()/2, image.getHeight()/2.0);
       image = createTransformed(image, at);
   }
+  //invoked by mirror_image
   private static BufferedImage createTransformed(BufferedImage image, AffineTransform at){
       BufferedImage newImage = new BufferedImage(
           image.getWidth(), image.getHeight(),
@@ -124,6 +135,7 @@ public class player{
       g.dispose();
       return newImage;
   }
+  //draws player to screen
   public void draw(Graphics g, ImageObserver observer) {
       // with the Point class, note that pos.getX() returns a double, but
       // pos.x reliably returns an int. https://stackoverflow.com/a/30220114/4655368
@@ -131,10 +143,12 @@ public class player{
       // position by multiplying by the tile size.
       g.drawImage(image, (int)(250 - width / 2), (int)(posy - height / 2), observer);
   }
+  //sets size of player
   public void setsize(float x, float y){
     width = x;
     height = y;
   }
+  //sets the position of player
   public void setpos(float x, float y){
     posx = x;
     posy = y;
@@ -143,6 +157,7 @@ public class player{
     left = posx - width / 2;
     right = posx + width / 2;
   }
+  //sets the velocity of the player
   public void setvel(float x, float y){
     velx = x;
     vely = y;
@@ -159,10 +174,12 @@ public class player{
       vely = -1 * termVely;
     }
   }
+  //sets the maximum velocity that the player can reach
   public void setTerminal(float x, float y){
     termVelx = x;
     termVely = y;
   }
+  //updates things
   public void tick(){
     setpos(posx + velx, posy + vely);
     if(vely < -.1){
@@ -221,6 +238,7 @@ public class player{
       setpos(posx, 0);
     }
   }
+  //reacts to the keys being pressed
   public void input(boolean up, boolean left, boolean down, boolean right, boolean space, boolean shift){
     updir = up;
     downdir = down;

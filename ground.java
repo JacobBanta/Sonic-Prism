@@ -3,8 +3,8 @@ public class ground{
   public int bottom;
   public int left;
   public int right;
+  //sets the collision box for the ground tiles
   public void setCollision(int x1,int y1,int x2,int y2){
-
     if(y1 > y2){
       top = y2;
       bottom = y1;
@@ -22,9 +22,9 @@ public class ground{
       right = x2;
     }
   }
+  //checks if the player is colliding with the collision box and checks if the player is standing on ground(for jump checks)
   public void checkCollision(player p){
     if (left < p.right && right > p.left && top < p.bottom && bottom > p.top){
-
       if(p.right > left && p.left < left && p.bottom > top && p.top < top){
         if(p.right - left > p.bottom - top){
           p.setpos(p.posx, top - p.height / 2);
