@@ -16,7 +16,7 @@ public class Window extends JPanel implements ActionListener, KeyListener {
     public boolean shift;
     public Timer timer;
     public player Player;
-    public ground[] obstacle = new ground[2];
+    public ground[] obstacle = new ground[3];
     public Window() {
         // set the game board size
         setPreferredSize(new Dimension(500, 500));
@@ -32,6 +32,8 @@ public class Window extends JPanel implements ActionListener, KeyListener {
         obstacle[0].setCollision(100, 100, 1000, 200);
         obstacle[1] = new ground();
         obstacle[1].setCollision(-1000, 200, 100, 300);
+        obstacle[2] = new ground();
+        obstacle[2].setCollision(250, 95, 500, 300);
     }
     @Override
     public void actionPerformed(ActionEvent e) {

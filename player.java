@@ -11,6 +11,7 @@ import java.awt.Graphics2D;
 public class player{
   public int stillTimer = 0;
   public boolean lookingUp;
+  public boolean lookingDown;
   public boolean updir;
   public boolean downdir;
   public boolean leftdir;
@@ -19,6 +20,7 @@ public class player{
   public int animateRun = 0;
   public int animatefast = 0;
   public int animateTurn = 0;
+  public int animateRoll = 0;
   public float termVelx = 15;
   public float termVely = 10;
   public float width = 1;
@@ -81,6 +83,18 @@ public class player{
       animatefast = 0;
     }
   }
+  private void animate_roll(){
+    if(animateRoll <= 4){
+      setimage(797 + 63 * animateRoll,194,43,43);
+    }
+    else{
+      setimage(9 + 63 * (animateRoll - 5),290,43,43);
+    }
+    animateRoll++;
+    if(animateRoll > 10){
+      animateRoll = 5;
+    }
+  }
   //animates the looking up motion
   private void animate_looking_up(){
     if((velx > -.2 && velx < .2) && (vely < .5 && vely > -.5)){
@@ -102,6 +116,24 @@ public class player{
       lookingUp = false;
     }
   }
+  //animates the looking down(aka curling up) motion
+  private void animate_looking_down(){
+    if((velx > -.2 && velx < .2) && (vely < .5 && vely > -.5)){
+      if(!lookingDown){
+        setimage(829,26,43,43);
+        if(facing_left){
+          mirror_image();
+        }
+        lookingDown = true;
+      }
+      else if(lookingDown){
+        setimage(829 + 63,26,43,43);
+        if(facing_left){
+          mirror_image();
+        }
+      }
+    }
+  }
   //sets the image to be standing still
   private void animate_still(){
     setimage(9,26,43,43);
@@ -112,11 +144,15 @@ public class player{
   //animates the idle motion
   private void animate_idle(){
     setimage(88 + 63 * (int)(animateIdle / 4),26,43,43);
+    if(facing_left){
+      mirror_image();
+    }
     animateIdle++;
     if(animateIdle > 19){
       animateIdle = 0;
     }
   }
+  //animates turning right to left
   private void animate_turn_left(){
     setimage(797 + 63 * animateTurn,110,43,43);
     animateTurn++;
@@ -126,6 +162,7 @@ public class player{
       facing_left = true;
     }
   }
+  //animates turning left to right
   private void animate_turn_right(){
     setimage(797 + 63 * animateTurn,110,43,43);
     mirror_image();
@@ -218,23 +255,35 @@ public class player{
         mirror_image();
       }
     }
-    else if(velx > .5 && ((!leftdir && rightdir) || (!rightdir && !leftdir))){
-      if(velx > 9){
+    else if(velx > .5 && (rightdir || (!rightdir && !leftdir))){
+      if(lookingDown){
+        animate_roll();
+      }
+      else if(velx > 9){
         animate_run_fast_right();
+        animateRoll = 0;
       }
       else{
         animate_run_right();
+        animateRoll = 0;
       }
     }
-    else if(velx < -.5 && ((leftdir && !rightdir) || (!rightdir && !leftdir))){
-      if(velx < -9){
+    else if(velx < -.5 && (leftdir || (!rightdir && !leftdir))){
+      if(lookingDown){
+        animate_roll();
+        mirror_image();
+      }
+      else if(velx < -9){
         animate_run_fast_left();
+        animateRoll = 0;
       }
       else{
         animate_run_left();
+        animateRoll = 0;
       }
     }
     else{
+      animateRoll = 0;
       if(vely < .5){
         stillTimer++;
       }
@@ -249,6 +298,13 @@ public class player{
     else{
       lookingUp = false;
     }
+    if(downdir){
+      animate_looking_down();
+    }
+    else if(velx < 2 && velx > -2){
+      lookingDown = false;
+      animateRoll = 0;
+    }
     if(velx > 0){
       facing_left = false;
     }
@@ -261,15 +317,6 @@ public class player{
     else{
       setvel(velx * (float).95, vely + (float).4);
     }
-    /*if(posx < 0){
-      setpos(500, posy);
-    }*/
-    if(posy < 0){
-      setpos(posx, 500);
-    }
-    /*if(posx > 500){
-      setpos(0, posy);
-    }*/
     if(posy > 500){
       setpos(posx, 0);
     }
@@ -295,7 +342,6 @@ public class player{
     }
     if(down){
       stillTimer = 0;
-      setvel(velx, vely + (float).5);
     }
     if(left && !right){
       stillTimer = 0;
