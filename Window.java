@@ -16,7 +16,7 @@ public class Window extends JPanel implements ActionListener, KeyListener {
     public boolean shift;
     public Timer timer;
     public player Player;
-    public ground[] obstacle = new ground[3];
+    public ground[] obstacle = new ground[4];
     public Window() {
         // set the game board size
         setPreferredSize(new Dimension(500, 500));
@@ -28,12 +28,14 @@ public class Window extends JPanel implements ActionListener, KeyListener {
         timer = new Timer(25, this);
         timer.start();
 
-        obstacle[0] = new ground();
-        obstacle[0].setCollision(100, 100, 1000, 200);
+        obstacle[3] = new ground();
+        obstacle[3].setCollision(100, 100, 1000, 200);
         obstacle[1] = new ground();
         obstacle[1].setCollision(-1000, 200, 100, 300);
         obstacle[2] = new ground();
         obstacle[2].setCollision(250, 95, 500, 300);
+        obstacle[0] = new ground();
+        obstacle[0].setSlope(0, 200, 100, 100);
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -96,7 +98,12 @@ public class Window extends JPanel implements ActionListener, KeyListener {
     private void drawBackground(Graphics g) {
         g.setColor(new Color(255, 216, 230));
         for(int x = 0; x < obstacle.length; x++){
-          g.fillRect(obstacle[x].left - (int)Player.posx + 250,obstacle[x].top,obstacle[x].right - obstacle[x].left,obstacle[x].bottom - obstacle[x].top);
+          if(obstacle[x].type == 0){
+            g.fillRect(obstacle[x].left - (int)Player.posx + 250,obstacle[x].top,obstacle[x].right - obstacle[x].left,obstacle[x].bottom - obstacle[x].top);
+          }
+          else if(obstacle[x].type == 1){
+            g.fillPolygon(new int[] {obstacle[x].startx - (int)Player.posx + 250, obstacle[x].endx - (int)Player.posx + 250, obstacle[x].highx - (int)Player.posx + 250}, new int[] {obstacle[x].starty, obstacle[x].endy, obstacle[x].highy}, 3);
+          }
         }
     }
 }
