@@ -16,7 +16,7 @@ public class Window extends JPanel implements ActionListener, KeyListener {
     public boolean shift;
     public Timer timer;
     public player Player;
-    public ground[] obstacle = new ground[4];
+    public ground[] obstacle = new ground[3];
     public Window() {
         // set the game board size
         setPreferredSize(new Dimension(500, 500));
@@ -28,12 +28,10 @@ public class Window extends JPanel implements ActionListener, KeyListener {
         timer = new Timer(25, this);
         timer.start();
 
-        obstacle[3] = new ground();
-        obstacle[3].setCollision(100, 100, 1000, 200);
-        obstacle[1] = new ground();
-        obstacle[1].setCollision(-1000, 200, 100, 300);
         obstacle[2] = new ground();
-        obstacle[2].setCollision(250, 95, 500, 300);
+        obstacle[2].setCollision(100, 100, 996, 196);
+        obstacle[1] = new ground();
+        obstacle[1].setCollision(-988, 200, 100, 296);
         obstacle[0] = new ground();
         obstacle[0].setSlope(0, 200, 100, 100);
     }
@@ -45,6 +43,7 @@ public class Window extends JPanel implements ActionListener, KeyListener {
 
         Player.tick();
         Player.isOnGround = false;
+        Player.isOnSlope = false;
         for(int x = 0; x < obstacle.length; x++){
           obstacle[x].checkCollision(Player);
         }
@@ -65,7 +64,9 @@ public class Window extends JPanel implements ActionListener, KeyListener {
         // draw our graphics.
         drawBackground(g);
         Player.draw(g, this);
-
+        for(int x = 0; x < obstacle.length; x++){
+          obstacle[x].draw(g, this, (int)Player.posx);
+        }
         // this smooths out animations on some systems
         Toolkit.getDefaultToolkit().sync();
       }

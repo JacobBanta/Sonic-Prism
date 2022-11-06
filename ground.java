@@ -1,3 +1,14 @@
+import java.awt.event.KeyEvent;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.awt.Point;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.geom.AffineTransform;
+import java.awt.Graphics2D;
+import java.util.Date;
 public class ground{
   public int top;
   public int bottom;
@@ -10,7 +21,8 @@ public class ground{
   public int endy;
   public int highx;
   public int highy;
-
+  public BufferedImage concatImage2;
+  private BufferedImage image;
 
   //sets the collision box for the ground tiles
   public void setCollision(int x1,int y1,int x2,int y2){
@@ -31,6 +43,53 @@ public class ground{
       left = x1;
       right = x2;
     }
+    try {
+        image = ImageIO.read(new File("assets/groundTile.png"));
+    } catch (IOException exc) {
+        System.out.println("Error opening image file: " + exc.getMessage());
+    }
+    int tileHeight = (int)((bottom - top) / 32);
+    int tileWidth = (int)((right - left) / 32);
+    BufferedImage images[] = new BufferedImage[tileHeight];
+    for(int j = 0; j < images.length; j++) {
+       images[j] = image;
+    }
+    int heightTotal = 0;
+    for(int j = 0; j < images.length; j++) {
+       heightTotal += images[j].getHeight();
+    }
+
+    int heightCurr = 0;
+    BufferedImage concatImage = new BufferedImage(32, heightTotal, BufferedImage.TYPE_INT_RGB);
+    Graphics2D g2d = concatImage.createGraphics();
+    for(int j = 0; j < images.length; j++) {
+       g2d.drawImage(images[j], 0, heightCurr, null);
+       heightCurr += images[j].getHeight();
+    }
+    g2d.dispose();
+try{
+Thread.sleep(1000);
+}catch(InterruptedException ex)
+      {
+          ex.printStackTrace();
+      }
+    BufferedImage images2[] = new BufferedImage[tileWidth];
+    for(int j = 0; j < images2.length; j++) {
+       images2[j] = concatImage;
+    }
+    int heightTotal2 = 0;
+    for(int j = 0; j < images2.length; j++) {
+       heightTotal2 += images2[j].getWidth();
+    }
+
+    int heightCurr2 = 0;
+    concatImage2 = new BufferedImage(heightTotal2, heightTotal, BufferedImage.TYPE_INT_RGB);
+    Graphics2D g2d2 = concatImage2.createGraphics();
+    for(int j = 0; j < images2.length; j++) {
+       g2d2.drawImage(images2[j], heightCurr2, 0, null);
+       heightCurr2 += images2[j].getWidth();
+    }
+    g2d2.dispose();
   }
   public void setSlope(int x1, int y1, int x2, int y2){
     if(y1 > y2){
@@ -60,6 +119,11 @@ public class ground{
       return (int)(slope * x + (starty - (startx * slope)));
     }
     return 0;
+  }
+  public void draw(Graphics g, ImageObserver observer, int x) {
+    if(type == 0){
+      g.drawImage(concatImage2, (int)(left - x + 250), (int)(top), observer);
+    }
   }
   //checks if the player is colliding with the collision box and checks if the player is standing on ground(for jump checks)
   public void checkCollision(player p){
@@ -133,6 +197,7 @@ public class ground{
           p.posy = findy((int)p.left) - (p.height / 2);
           p.setvel(p.velx, 0);
           p.isOnGround = true;
+          p.isOnSlope = true;
         }
       }
       if(p.right > startx && p.right - 1 < endx){
@@ -141,6 +206,7 @@ public class ground{
           p.posy = findy((int)p.right) - (p.height / 2);
           p.setvel(p.velx, 0);
           p.isOnGround = true;
+          p.isOnSlope = true;
         }
       }
     }

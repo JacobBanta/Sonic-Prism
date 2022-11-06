@@ -34,6 +34,7 @@ public class player{
   public float left;
   public float right;
   public boolean isOnGround = false;
+  public boolean isOnSlope = false;
   private BufferedImage image;
   public boolean facing_left;
   //class construtor(called when player is created)
@@ -48,7 +49,11 @@ public class player{
   //animates the basic movement for the right direction
   private void animate_run_right(){
     facing_left = false;
-    setimage(9 + 63 * animateRun,110,43,43);
+    if(isOnSlope){
+      setimage(9 + 63 * animateRun,194,43,43);
+    }else{
+      setimage(9 + 63 * animateRun,110,43,43);
+    }
     animateRun++;
     if(animateRun > 7){
       animateRun = 0;
@@ -57,7 +62,11 @@ public class player{
   //animates the basic movement for the left direction
   private void animate_run_left(){
     facing_left = true;
-    setimage(9 + 63 * animateRun,110,43,43);
+    if(isOnSlope){
+      setimage(9 + 63 * animateRun,194,43,43);
+    }else{
+      setimage(9 + 63 * animateRun,110,43,43);
+    }
     mirror_image();
     animateRun++;
     if(animateRun > 7){
@@ -67,7 +76,11 @@ public class player{
   //animates the full speed movement for the right direction
   private void animate_run_fast_right(){
     facing_left = false;
-    setimage(529 + 63 * animatefast,110,43,43);
+    if(isOnSlope){
+      setimage(529 + 63 * animatefast,194,43,43);
+    }else{
+      setimage(529 + 63 * animatefast,110,43,43);
+    }
     animatefast++;
     if(animatefast > 3){
       animatefast = 0;
@@ -76,7 +89,11 @@ public class player{
   //animates the full speed movement for the left direction
   private void animate_run_fast_left(){
     facing_left = true;
-    setimage(529 + 63 * animatefast,110,43,43);
+    if(isOnSlope){
+      setimage(529 + 63 * animatefast,194,43,43);
+    }else{
+      setimage(529 + 63 * animatefast,110,43,43);
+    }
     mirror_image();
     animatefast++;
     if(animatefast > 3){
@@ -176,7 +193,7 @@ public class player{
   //invoked for setting the image
   private void setimage(int x, int y, int w, int h){
     try {
-        image = ImageIO.read(new File("Sonic_Prime_Test_Sprites_-_Sprite_Sheet.png")).getSubimage(x,y,w,h);
+        image = ImageIO.read(new File("assets/Sonic_Prime_Test_Sprites_-_Sprite_Sheet.png")).getSubimage(x,y,w,h);
     } catch (IOException exc) {
         System.out.println("Error opening image file: " + exc.getMessage());
     }
