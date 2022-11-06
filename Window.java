@@ -3,7 +3,8 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.*;
-public class Window extends JPanel implements ActionListener, KeyListener {
+
+public class Window extends JPanel implements ActionListener, KeyListener, MouseListener {
     // suppress serialization warning
     private static final long serialVersionUID = 490905409104883233L;
     public boolean up;
@@ -16,7 +17,10 @@ public class Window extends JPanel implements ActionListener, KeyListener {
     public boolean shift;
     public Timer timer;
     public player Player;
-    public ground[] obstacle = new ground[3];
+    public int mousex;
+    public int mousey;
+    public boolean isInGame;
+    public ground[][] obstacle = new ground[1][3];
     public Window() {
         // set the game board size
         setPreferredSize(new Dimension(500, 500));
@@ -28,27 +32,29 @@ public class Window extends JPanel implements ActionListener, KeyListener {
         timer = new Timer(25, this);
         timer.start();
 
-        obstacle[2] = new ground();
-        obstacle[2].setCollision(100, 100, 996, 196);
-        obstacle[1] = new ground();
-        obstacle[1].setCollision(-988, 200, 100, 296);
-        obstacle[0] = new ground();
-        obstacle[0].setSlope(0, 200, 100, 100);
+        addMouseListener(this);
+
+        obstacle[0][2] = new ground();
+        obstacle[0][2].setCollision(100, 100, 996, 196);
+        obstacle[0][1] = new ground();
+        obstacle[0][1].setCollision(-988, 200, 100, 296);
+        obstacle[0][0] = new ground();
+        obstacle[0][0].setSlope(0, 200, 100, 100);
     }
     @Override
     public void actionPerformed(ActionEvent e) {
         // this method is called by the timer every 25 ms.
         // use this space to update the state of your game or animation
         // before the graphics are redrawn.
-
+        if(isInGame){
         Player.tick();
         Player.isOnGround = false;
         Player.isOnSlope = false;
-        for(int x = 0; x < obstacle.length; x++){
-          obstacle[x].checkCollision(Player);
+        for(int x = 0; x < obstacle[0].length; x++){
+          obstacle[0][x].checkCollision(Player);
         }
         Player.input(up, left, down, right, space, shift);
-
+        }
         // calling repaint() will trigger paintComponent() to run again,
         // which will refresh/redraw the graphics.
         repaint();
@@ -60,12 +66,15 @@ public class Window extends JPanel implements ActionListener, KeyListener {
         // because Component implements the ImageObserver interface, and JPanel
         // extends from Component. So "this" Board instance, as a Component, can
         // react to imageUpdate() events triggered by g.drawImage()
-
+        if(isInGame){
         // draw our graphics.
-        drawBackground(g);
-        Player.draw(g, this);
-        for(int x = 0; x < obstacle.length; x++){
-          obstacle[x].draw(g, this, (int)Player.posx);
+          drawBackground(g);
+          Player.draw(g, this);
+          for(int x = 0; x < obstacle[0].length; x++){
+            obstacle[0][x].draw(g, this, (int)Player.posx);
+          }
+        }else{
+          drawMenu(g);
         }
         // this smooths out animations on some systems
         Toolkit.getDefaultToolkit().sync();
@@ -95,16 +104,60 @@ public class Window extends JPanel implements ActionListener, KeyListener {
         if (e.getKeyCode() == 17) ctrl = true;
         if (e.getKeyCode() == 18) alt = true;
     }
+
+    public void mousePressed(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {
+      int x=e.getX();
+      int y=e.getY();
+      System.out.println(x+","+y);
+      if(x > 136 && x < 379 && y > 195 && y < 310){
+        isInGame = true;
+      }
+    }
 //name is a bit misleading. this method actually just draws the ground peices
     private void drawBackground(Graphics g) {
         g.setColor(new Color(255, 216, 230));
-        for(int x = 0; x < obstacle.length; x++){
-          if(obstacle[x].type == 0){
-            g.fillRect(obstacle[x].left - (int)Player.posx + 250,obstacle[x].top,obstacle[x].right - obstacle[x].left,obstacle[x].bottom - obstacle[x].top);
+        for(int x = 0; x < obstacle[0].length; x++){
+          if(obstacle[0][x].type == 0){
+            g.fillRect(obstacle[0][x].left - (int)Player.posx + 250,obstacle[0][x].top,obstacle[0][x].right - obstacle[0][x].left,obstacle[0][x].bottom - obstacle[0][x].top);
           }
-          else if(obstacle[x].type == 1){
-            g.fillPolygon(new int[] {obstacle[x].startx - (int)Player.posx + 250, obstacle[x].endx - (int)Player.posx + 250, obstacle[x].highx - (int)Player.posx + 250}, new int[] {obstacle[x].starty, obstacle[x].endy, obstacle[x].highy}, 3);
+          else if(obstacle[0][x].type == 1){
+            g.fillPolygon(new int[] {obstacle[0][x].startx - (int)Player.posx + 250, obstacle[0][x].endx - (int)Player.posx + 250, obstacle[0][x].highx - (int)Player.posx + 250}, new int[] {obstacle[0][x].starty, obstacle[0][x].endy, obstacle[0][x].highy}, 3);
           }
         }
+    }
+    private void drawMenu(Graphics g){
+      // set the text to be displayed
+      String text = "Play";
+      // we need to cast the Graphics to Graphics2D to draw nicer text
+      Graphics2D g2d = (Graphics2D) g;
+      g2d.setRenderingHint(
+          RenderingHints.KEY_TEXT_ANTIALIASING,
+          RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g2d.setRenderingHint(
+          RenderingHints.KEY_RENDERING,
+          RenderingHints.VALUE_RENDER_QUALITY);
+      g2d.setRenderingHint(
+          RenderingHints.KEY_FRACTIONALMETRICS,
+          RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+      // set the text color and font
+      g2d.setColor(new Color(30, 201, 139));
+      g2d.setFont(new Font("Lato", Font.BOLD, 100));
+      // draw the score in the bottom center of the screen
+      // https://stackoverflow.com/a/27740330/4655368
+      FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
+      // the text will be contained within this rectangle.
+      // here I've sized it to be the entire bottom row of board tiles
+      Rectangle rect = new Rectangle(0, 0, 500, 500);
+      // determine the x coordinate for the text
+      int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
+      // determine the y coordinate for the text
+      // (note we add the ascent, as in java 2d 0 is top of the screen)
+      int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
+      // draw the string
+      g2d.drawString(text, x, y);
     }
 }

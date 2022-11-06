@@ -67,12 +67,6 @@ public class ground{
        heightCurr += images[j].getHeight();
     }
     g2d.dispose();
-try{
-Thread.sleep(1000);
-}catch(InterruptedException ex)
-      {
-          ex.printStackTrace();
-      }
     BufferedImage images2[] = new BufferedImage[tileWidth];
     for(int j = 0; j < images2.length; j++) {
        images2[j] = concatImage;

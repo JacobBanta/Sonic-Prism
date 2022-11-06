@@ -1,3 +1,6 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import javax.swing.*;
 
 class Main {
@@ -23,6 +26,8 @@ class Main {
         window.pack();
         // open window in the center of the screen
         window.setLocationRelativeTo(null);
+
+
         // display the window
         window.setVisible(true);
     }
