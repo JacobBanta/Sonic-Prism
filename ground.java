@@ -132,7 +132,7 @@ public class ground{
           }
           if(p.right - left < p.bottom - top){
             p.setpos(left - p.width / 2, p.posy);
-            p.setvel(0 ,p.vely);
+            //p.setvel(0 ,p.vely);
           }
         }
         else if(p.right > left && p.left < left && bottom > p.top && p.bottom > bottom){
@@ -153,7 +153,7 @@ public class ground{
           }
           if(right - p.left < p.bottom - top){
             p.setpos(right + p.width / 2, p.posy);
-            p.setvel(0 ,p.vely);
+            //p.setvel(0 ,p.vely);
           }
         }
         else if(right > p.left && p.right > right && bottom > p.top && p.bottom > bottom){
