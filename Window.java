@@ -33,6 +33,12 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
     private int opening = 0;
     public boolean isInGame;
     public ground[][] obstacle = new ground[1][3];
+    private BufferedImage inImage;
+    private BufferedImage outImage;
+    private float alpha = 0f;
+    private long startTime = -1;
+    public boolean fading;
+    public  Timer timer2;
     public Window() {
         // set the game board size
         setPreferredSize(new Dimension(500, 500));
@@ -52,6 +58,33 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
         obstacle[0][1].setCollision(-988, 200, 100, 296);
         obstacle[0][0] = new ground();
         obstacle[0][0].setSlope(0, 200, 100, 100);
+        try{
+            inImage = ImageIO.read(new File("assets/Sonic_Prism_Logo.png"));
+            outImage = ImageIO.read(new File("assets/main menu.png"));
+        } catch (IOException exc) {
+            System.out.println("Error opening image file: " + exc.getMessage());
+        }
+
+        timer2 = new Timer(40, new ActionListener() {//crates new timer
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (startTime < 0) {//fade start
+                    startTime = System.currentTimeMillis();
+                } else {//fade still going
+
+                    long time = System.currentTimeMillis();//gets current time
+                    long duration = time - startTime;//finds how long fade has been going
+                    if (duration >= 750/*RUNNING_TIME*/) {
+                        startTime = -1;
+                        ((Timer) e.getSource()).stop();
+                        alpha = 0f;
+                    } else {
+                        alpha = 1f - ((float)duration / (float)750/*(float)RUNNING_TIME*/);
+                    }
+                    repaint();
+                }
+            }
+        });
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -85,6 +118,19 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
           for(int x = 0; x < obstacle[0].length; x++){
             obstacle[0][x].draw(g, this, (int)Player.posx);
           }
+        }else if(opening > 150 && opening < 200){
+          opening++;
+          Graphics2D g2d = (Graphics2D) g.create();
+          g2d.setComposite(AlphaComposite.SrcOver.derive(alpha));
+          int x = (getWidth() - inImage.getWidth()) / 2;
+          int y = (getHeight() - inImage.getHeight()) / 2;
+          g2d.drawImage(inImage, x, y, this);
+
+          g2d.setComposite(AlphaComposite.SrcOver.derive(1f - alpha));
+          x = (getWidth() - outImage.getWidth()) / 2;
+          y = (getHeight() - outImage.getHeight()) / 2;
+          g2d.drawImage(outImage, x, y, this);
+          g2d.dispose();
         }else{
           opening++;
           drawOpening(g, opening, this);
@@ -141,44 +187,28 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
           }
         }
     }
-    private void drawOpening(Graphics g, int opening, ImageObserver observer){
-      if(opening > 200){
-        drawMenu(g);
+    private void drawOpening(Graphics g, int openin, ImageObserver observer){
+
+      if(openin > 200){
+        fading = false;
+        drawMenu(g, observer);
       }
-      else if(opening < 150){
+      else if(openin < 150){
         drawLogo(g, observer);
       }
+      else{
+        fading = true;
+        alpha = 0f;
+        timer2.start();
+      }
     }
-    private void drawMenu(Graphics g){
-      // set the text to be displayed
-      String text = "Play";
-      // we need to cast the Graphics to Graphics2D to draw nicer text
-      Graphics2D g2d = (Graphics2D) g;
-      g2d.setRenderingHint(
-          RenderingHints.KEY_TEXT_ANTIALIASING,
-          RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-      g2d.setRenderingHint(
-          RenderingHints.KEY_RENDERING,
-          RenderingHints.VALUE_RENDER_QUALITY);
-      g2d.setRenderingHint(
-          RenderingHints.KEY_FRACTIONALMETRICS,
-          RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-      // set the text color and font
-      g2d.setColor(new Color(30, 201, 139));
-      g2d.setFont(new Font("Lato", Font.BOLD, 100));
-      // draw the score in the bottom center of the screen
-      // https://stackoverflow.com/a/27740330/4655368
-      FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
-      // the text will be contained within this rectangle.
-      // here I've sized it to be the entire bottom row of board tiles
-      Rectangle rect = new Rectangle(0, 0, 500, 500);
-      // determine the x coordinate for the text
-      int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
-      // determine the y coordinate for the text
-      // (note we add the ascent, as in java 2d 0 is top of the screen)
-      int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
-      // draw the string
-      g2d.drawString(text, x, y);
+    private void drawMenu(Graphics g, ImageObserver observer){
+      try {
+          BufferedImage image = ImageIO.read(new File("assets/main menu.png"));
+          g.drawImage(image, 168, 207, observer);
+      } catch (IOException exc) {
+          System.out.println("Error opening image file: " + exc.getMessage());
+      }
     }
     private void drawLogo(Graphics g, ImageObserver observer){
       try {
@@ -187,8 +217,5 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
       } catch (IOException exc) {
           System.out.println("Error opening image file: " + exc.getMessage());
       }
-    }
-    public int getRGBint(int r, int g, int b){
-      return (r * 65536 + g * 256 + b);
     }
 }
