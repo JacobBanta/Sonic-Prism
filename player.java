@@ -328,7 +328,7 @@ public class player{
     else if (velx < 0){
       facing_left = true;
     }
-    if(velx < 2 && velx > -2 && (!leftdir && !rightdir) && !(leftdir && rightdir)){
+    if(velx < 2 && velx > -2 && !leftdir && !rightdir){
       setvel(velx * (float).5, vely + (float).4);
     }
     else{
@@ -337,10 +337,10 @@ public class player{
     if(posy > 500){
       setpos(posx, 0);
     }
-    if(velx < -4 && velx > -8 && rightdir && !leftdir){
+    if(velx < -4 && velx > -8 && rightdir){
       animate_turn_right();
     }
-    else if(velx > 4 && velx < 8 && !rightdir && leftdir){
+    else if(velx > 4 && velx < 8 && leftdir){
       animate_turn_left();
     }
     else{
@@ -351,8 +351,13 @@ public class player{
   public void input(boolean up, boolean left, boolean down, boolean right, boolean space, boolean shift){
     updir = up;
     downdir = down;
-    leftdir = left;
-    rightdir = right;
+    if(left && right){
+      leftdir = false;
+      rightdir = false;
+    }else{
+      leftdir = left;
+      rightdir = right;
+    }
     if(up){
       stillTimer = 0;
       //setvel(velx, vely - 10);
