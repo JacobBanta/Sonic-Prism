@@ -166,7 +166,7 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
     public void mouseClicked(MouseEvent e) {
       int x=e.getX();
       int y=e.getY();
-      if(x > 136 && x < 379 && y > 195 && y < 310){
+      if(x > 158 && x < 342 && y > 197 && y < 302){
         isInGame = true;
       }
     }
