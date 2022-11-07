@@ -3,6 +3,17 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.awt.Point;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.geom.AffineTransform;
+import java.awt.Graphics2D;
+import java.util.Date;
 
 public class Window extends JPanel implements ActionListener, KeyListener, MouseListener {
     // suppress serialization warning
@@ -19,6 +30,7 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
     public player Player;
     public int mousex;
     public int mousey;
+    private int opening = 0;
     public boolean isInGame;
     public ground[][] obstacle = new ground[1][3];
     public Window() {
@@ -74,7 +86,8 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
             obstacle[0][x].draw(g, this, (int)Player.posx);
           }
         }else{
-          drawMenu(g);
+          opening++;
+          drawOpening(g, opening, this);
         }
         // this smooths out animations on some systems
         Toolkit.getDefaultToolkit().sync();
@@ -112,7 +125,6 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
     public void mouseClicked(MouseEvent e) {
       int x=e.getX();
       int y=e.getY();
-      System.out.println(x+","+y);
       if(x > 136 && x < 379 && y > 195 && y < 310){
         isInGame = true;
       }
@@ -128,6 +140,14 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
             g.fillPolygon(new int[] {obstacle[0][x].startx - (int)Player.posx + 250, obstacle[0][x].endx - (int)Player.posx + 250, obstacle[0][x].highx - (int)Player.posx + 250}, new int[] {obstacle[0][x].starty, obstacle[0][x].endy, obstacle[0][x].highy}, 3);
           }
         }
+    }
+    private void drawOpening(Graphics g, int opening, ImageObserver observer){
+      if(opening > 200){
+        drawMenu(g);
+      }
+      else if(opening < 150){
+        drawLogo(g, observer);
+      }
     }
     private void drawMenu(Graphics g){
       // set the text to be displayed
@@ -159,5 +179,16 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
       int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
       // draw the string
       g2d.drawString(text, x, y);
+    }
+    private void drawLogo(Graphics g, ImageObserver observer){
+      try {
+          BufferedImage image = ImageIO.read(new File("assets/Sonic_Prism_Logo.png"));
+          g.drawImage(image, 32, 20, observer);
+      } catch (IOException exc) {
+          System.out.println("Error opening image file: " + exc.getMessage());
+      }
+    }
+    public int getRGBint(int r, int g, int b){
+      return (r * 65536 + g * 256 + b);
     }
 }
