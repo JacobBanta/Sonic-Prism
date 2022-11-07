@@ -60,21 +60,24 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
             System.out.println("Error opening image file: " + exc.getMessage());
         }
 
-        timer2 = new Timer(40, new ActionListener() {//crates new timer
+        timer2 = new Timer(0, new ActionListener() {//crates new timer
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (startTime < 0) {//fade start
                     startTime = System.currentTimeMillis();
+                    BufferedImage tmp = inImage;
+                    inImage = outImage;
+                    outImage = tmp;
                 } else {//fade still going
 
                     long time = System.currentTimeMillis();//gets current time
                     long duration = time - startTime;//finds how long fade has been going
-                    if (duration >= 750/*RUNNING_TIME*/) {
+                    if (duration >= 750) {
                         startTime = -1;
                         ((Timer) e.getSource()).stop();
                         alpha = 0f;
                     } else {
-                        alpha = 1f - ((float)duration / (float)750/*(float)RUNNING_TIME*/);
+                        alpha = 1f - ((float)duration / (float)750);
                     }
                     repaint();
                 }
@@ -97,7 +100,8 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
         }
         // calling repaint() will trigger paintComponent() to run again,
         // which will refresh/redraw the graphics.
-        repaint();
+        if(!(opening >= 150 && opening < 200)){
+        repaint();}
     }
     @Override
     public void paintComponent(Graphics g) {
@@ -113,22 +117,23 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
           for(int x = 0; x < obstacle[0].length; x++){
             obstacle[0][x].draw(g, this, (int)Player.posx);
           }
-        }else if(opening > 150 && opening < 200){
+        }else{
           opening++;
+          if(opening == 150){
+            alpha = 0f;
+            timer2.start();
+          }
           Graphics2D g2d = (Graphics2D) g.create();
-          g2d.setComposite(AlphaComposite.SrcOver.derive(alpha));
+          g2d.setComposite(AlphaComposite.SrcOver.derive(1f - alpha));
           int x = (getWidth() - inImage.getWidth()) / 2;
           int y = (getHeight() - inImage.getHeight()) / 2;
           g2d.drawImage(inImage, x, y, this);
 
-          g2d.setComposite(AlphaComposite.SrcOver.derive(1f - alpha));
+          g2d.setComposite(AlphaComposite.SrcOver.derive(alpha));
           x = (getWidth() - outImage.getWidth()) / 2;
           y = (getHeight() - outImage.getHeight()) / 2;
           g2d.drawImage(outImage, x, y, this);
           g2d.dispose();
-        }else{
-          opening++;
-          drawOpening(g, opening, this);
         }
         // this smooths out animations on some systems
         Toolkit.getDefaultToolkit().sync();
@@ -166,7 +171,7 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
     public void mouseClicked(MouseEvent e) {
       int x=e.getX();
       int y=e.getY();
-      if(x > 158 && x < 342 && y > 197 && y < 302){
+      if(x > 158 && x < 342 && y > 197 && y < 302 && opening > 200){
         isInGame = true;
       }
     }
@@ -181,36 +186,5 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
             g.fillPolygon(new int[] {obstacle[0][x].startx - (int)Player.posx + 250, obstacle[0][x].endx - (int)Player.posx + 250, obstacle[0][x].highx - (int)Player.posx + 250}, new int[] {obstacle[0][x].starty, obstacle[0][x].endy, obstacle[0][x].highy}, 3);
           }
         }
-    }
-    private void drawOpening(Graphics g, int openin, ImageObserver observer){
-
-      if(openin > 200){
-        fading = false;
-        drawMenu(g, observer);
-      }
-      else if(openin < 150){
-        drawLogo(g, observer);
-      }
-      else{
-        fading = true;
-        alpha = 0f;
-        timer2.start();
-      }
-    }
-    private void drawMenu(Graphics g, ImageObserver observer){
-      try {
-          BufferedImage image = ImageIO.read(new File("assets/main menu.png"));
-          g.drawImage(image, 168, 207, observer);
-      } catch (IOException exc) {
-          System.out.println("Error opening image file: " + exc.getMessage());
-      }
-    }
-    private void drawLogo(Graphics g, ImageObserver observer){
-      try {
-          BufferedImage image = ImageIO.read(new File("assets/Sonic_Prism_Logo.png"));
-          g.drawImage(image, 32, 20, observer);
-      } catch (IOException exc) {
-          System.out.println("Error opening image file: " + exc.getMessage());
-      }
     }
 }
