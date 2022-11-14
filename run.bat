@@ -1,1 +1,1 @@
-java -jar sonic.jar
+java -jar sonic.jar 1

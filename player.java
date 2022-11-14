@@ -9,46 +9,24 @@ import javax.imageio.ImageIO;
 import java.awt.geom.AffineTransform;
 import java.awt.Graphics2D;
 public class player{
+  public boolean lookingUp, lookingDown, updir, downdir, leftdir, rightdir, facing_left;
+  public boolean isOnGround, isOnSlope = false;
   public int stillTimer = 0;
-  public boolean lookingUp;
-  public boolean lookingDown;
-  public boolean updir;
-  public boolean downdir;
-  public boolean leftdir;
-  public boolean rightdir;
-  public int animateIdle = 0;
-  public int animateRun = 0;
-  public int animatefast = 0;
-  public int animateTurn = 0;
-  public int animateRoll = 0;
+  public int animateIdle, animateRun, animatefast, animateTurn, animateRoll = 0;
   public float termVelx = 15;
   public float termVely = 10;
-  public float width = 1;
-  public float height = 1;
-  public float posx = 0;
-  public float posy = 0;
-  public float velx;
-  public float vely;
-  public float top;
-  public float bottom;
-  public float left;
-  public float right;
-  public boolean isOnGround = false;
-  public boolean isOnSlope = false;
+  public float width, height = 1;
+  public float posx, posy = 0;
+  public float velx, vely, top, bottom, left, right;
   private BufferedImage image;
-  public boolean facing_left;
-  //class construtor(called when player is created)
   public player() {
       // load the assets
       loadImage();
   }
-  //loads the base image
   private void loadImage() {
       setimage(9,26,43,43);
   }
-  //animates the basic movement for the right direction
-  private void animate_run_right(){
-    facing_left = false;
+  private void animate_run(){
     if(isOnSlope){
       setimage(9 + 63 * animateRun,194,43,43);
     }else{
@@ -59,42 +37,12 @@ public class player{
       animateRun = 0;
     }
   }
-  //animates the basic movement for the left direction
-  private void animate_run_left(){
-    facing_left = true;
-    if(isOnSlope){
-      setimage(9 + 63 * animateRun,194,43,43);
-    }else{
-      setimage(9 + 63 * animateRun,110,43,43);
-    }
-    mirror_image();
-    animateRun++;
-    if(animateRun > 7){
-      animateRun = 0;
-    }
-  }
-  //animates the full speed movement for the right direction
-  private void animate_run_fast_right(){
-    facing_left = false;
+  private void animate_run_fast(){
     if(isOnSlope){
       setimage(529 + 63 * animatefast,194,43,43);
     }else{
       setimage(529 + 63 * animatefast,110,43,43);
     }
-    animatefast++;
-    if(animatefast > 3){
-      animatefast = 0;
-    }
-  }
-  //animates the full speed movement for the left direction
-  private void animate_run_fast_left(){
-    facing_left = true;
-    if(isOnSlope){
-      setimage(529 + 63 * animatefast,194,43,43);
-    }else{
-      setimage(529 + 63 * animatefast,110,43,43);
-    }
-    mirror_image();
     animatefast++;
     if(animatefast > 3){
       animatefast = 0;
@@ -112,7 +60,6 @@ public class player{
       animateRoll = 5;
     }
   }
-  //animates the looking up motion
   private void animate_looking_up(){
     if((velx > -.2 && velx < .2) && (vely < .5 && vely > -.5)){
       if(!lookingUp){
@@ -133,7 +80,6 @@ public class player{
       lookingUp = false;
     }
   }
-  //animates the looking down(aka curling up) motion
   private void animate_looking_down(){
     if((velx > -.2 && velx < .2) && (vely < .5 && vely > -.5)){
       if(!lookingDown){
@@ -151,14 +97,12 @@ public class player{
       }
     }
   }
-  //sets the image to be standing still
   private void animate_still(){
     setimage(9,26,43,43);
     if(facing_left){
         mirror_image();
     }
   }
-  //animates the idle motion
   private void animate_idle(){
     setimage(88 + 63 * (int)(animateIdle / 4),26,43,43);
     if(facing_left){
@@ -169,7 +113,6 @@ public class player{
       animateIdle = 0;
     }
   }
-  //animates turning right to left
   private void animate_turn_left(){
     setimage(797 + 63 * animateTurn,110,43,43);
     animateTurn++;
@@ -179,7 +122,6 @@ public class player{
       facing_left = true;
     }
   }
-  //animates turning left to right
   private void animate_turn_right(){
     setimage(797 + 63 * animateTurn,110,43,43);
     mirror_image();
@@ -190,7 +132,6 @@ public class player{
       facing_left = false;
     }
   }
-  //invoked for setting the image
   private void setimage(int x, int y, int w, int h){
     try {
         image = ImageIO.read(new File("assets/Sonic_Prime_Test_Sprites_-_Sprite_Sheet.png")).getSubimage(x,y,w,h);
@@ -198,7 +139,6 @@ public class player{
         System.out.println("Error opening image file: " + exc.getMessage());
     }
   }
-  //invoked for mirroring the image(turning right to left)
   private void mirror_image(){
     AffineTransform at = new AffineTransform();
         at.concatenate(AffineTransform.getScaleInstance(1, -1));
@@ -208,7 +148,6 @@ public class player{
           Math.PI, image.getWidth()/2, image.getHeight()/2.0);
       image = createTransformed(image, at);
   }
-  //invoked by mirror_image
   private static BufferedImage createTransformed(BufferedImage image, AffineTransform at){
       BufferedImage newImage = new BufferedImage(
           image.getWidth(), image.getHeight(),
@@ -219,7 +158,6 @@ public class player{
       g.dispose();
       return newImage;
   }
-  //draws player to screen
   public void draw(Graphics g, ImageObserver observer) {
       // with the Point class, note that pos.getX() returns a double, but
       // pos.x reliably returns an int. https://stackoverflow.com/a/30220114/4655368
@@ -227,12 +165,10 @@ public class player{
       // position by multiplying by the tile size.
       g.drawImage(image, (int)(250 - width / 2), (int)(posy - height / 2), observer);
   }
-  //sets size of player
   public void setsize(float x, float y){
     width = x;
     height = y;
   }
-  //sets the position of player
   public void setpos(float x, float y){
     posx = x;
     posy = y;
@@ -241,7 +177,6 @@ public class player{
     left = posx - width / 2;
     right = posx + width / 2;
   }
-  //sets the velocity of the player
   public void setvel(float x, float y){
     velx = x;
     vely = y;
@@ -258,74 +193,75 @@ public class player{
       vely = -1 * termVely;
     }
   }
-  //sets the maximum velocity that the player can reach
   public void setTerminal(float x, float y){
     termVelx = x;
     termVely = y;
   }
-  //updates things
   public void tick(){
     setpos(posx + velx, posy + vely);
-    if(vely < -.1){
+    if(vely < -.1){//moving up
       setimage(971,26,43,43);
       if(facing_left){
         mirror_image();
       }
     }
-    else if(velx > .5 && (rightdir || (!rightdir && !leftdir))){
+    else if(velx > .5 && !leftdir){//moving right
       if(lookingDown){
         animate_roll();
       }
-      else if(velx > 9){
-        animate_run_fast_right();
-        animateRoll = 0;
-      }
       else{
-        animate_run_right();
         animateRoll = 0;
+        if(velx > 9){
+          animate_run_fast();
+        }
+        else{
+          animate_run();
+        }
       }
     }
-    else if(velx < -.5 && (leftdir || (!rightdir && !leftdir))){
+    else if(velx < -.5 && !rightdir){//moving left
+      facing_left = true;
       if(lookingDown){
         animate_roll();
-        mirror_image();
-      }
-      else if(velx < -9){
-        animate_run_fast_left();
-        animateRoll = 0;
       }
       else{
-        animate_run_left();
-        animateRoll = 0;
+      animateRoll = 0;
+        if(velx < -9){
+          animate_run_fast();
+        }
+        else{
+          animate_run();
+        }
       }
+      mirror_image();
     }
-    else{
+    else{//still
       animateRoll = 0;
       if(vely < .5){
         stillTimer++;
       }
       animate_still();
     }
-    if(stillTimer > 120){
+    if(stillTimer > 120){//trigger for idle animation
       animate_idle();
     }
-    if(updir){
+    if(updir){//trigger for looking up
       animate_looking_up();
     }
     else{
       lookingUp = false;
     }
-    if(downdir){
+    if(downdir){//trigger for crouching
       animate_looking_down();
     }
-    else if(velx < 2 && velx > -2){
+    else if(velx < 2 && velx > -2){//disables crouch
       lookingDown = false;
       animateRoll = 0;
     }
-    if(velx > 0){
+    if(velx > -1){
       facing_left = false;
     }
-    else if (velx < 0){
+    else if (velx < 1){
       facing_left = true;
     }
     if(velx < 2 && velx > -2 && !leftdir && !rightdir){
@@ -347,7 +283,6 @@ public class player{
       animateTurn = 0;
     }
   }
-  //reacts to the keys being pressed
   public void input(boolean up, boolean left, boolean down, boolean right, boolean space, boolean shift){
     updir = up;
     downdir = down;
@@ -389,5 +324,4 @@ public class player{
       }
     }
   }
-    //w = 87 a = 65 s = 83 d = 68 space = 32 shift = 16 ctrl = 17 alt = 18
 }

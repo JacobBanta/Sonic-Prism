@@ -10,21 +10,27 @@ import java.awt.geom.AffineTransform;
 import java.awt.Graphics2D;
 import java.util.Date;
 public class ground{
-  public int top;
-  public int bottom;
-  public int left;
-  public int right;
-  public int type;
-  public int startx;
-  public int starty;
-  public int endx;
-  public int endy;
-  public int highx;
-  public int highy;
+  public int top, bottom, left, right, type, startx, starty, endx, endy, highx, highy, lowx, lowy;
   public BufferedImage concatImage2;
   private BufferedImage image;
+  public ground(){
 
-  //sets the collision box for the ground tiles
+  }
+  public ground(int type, int[] points){
+    if(type == 0 && points.length == 4){
+      setCollision(points[0], points[1], points[2], points[3]);
+    }
+    if(type == 1 && points.length == 4){
+      setSlope(points[0], points[1], points[2], points[3]);
+    }
+  }
+  public static BufferedImage convertToARGB(BufferedImage image){
+    BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(),BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g = newImage.createGraphics();
+    g.drawImage(image, 0, 0, null);
+    g.dispose();
+    return newImage;
+}
   public void setCollision(int x1,int y1,int x2,int y2){
     type = 0;
     if(y1 > y2){
@@ -88,21 +94,80 @@ public class ground{
   public void setSlope(int x1, int y1, int x2, int y2){
     if(y1 > y2){
       highy = y1;
+      lowy = y2;
     }
     else{
       highy = y2;
+      lowy = y1;
     }
     if(x1 > x2){
       highx = x1;
+      lowx = x2;
     }
     else{
       highx = x2;
+      lowx = x1;
     }
     type = 1;
     startx = x1;
     starty = y1;
     endx = x2;
     endy = y2;
+    //---------------------------------------------------------------------------------------------
+    try {
+        image = ImageIO.read(new File("assets/groundTile.png"));
+    } catch (IOException exc) {
+        System.out.println("Error opening image file: " + exc.getMessage());
+    }
+    int tileHeight = (int)((highy - lowy) / 32);
+    int tileWidth = (int)((highx - lowx) / 32);
+    BufferedImage images[] = new BufferedImage[tileHeight];
+    for(int j = 0; j < images.length; j++) {
+       images[j] = image;
+    }
+    int heightTotal = 0;
+    for(int j = 0; j < images.length; j++) {
+       heightTotal += images[j].getHeight();
+    }
+
+    int heightCurr = 0;
+    BufferedImage concatImage = new BufferedImage(32, heightTotal, BufferedImage.TYPE_INT_RGB);
+    Graphics2D g2d = concatImage.createGraphics();
+    for(int j = 0; j < images.length; j++) {
+       g2d.drawImage(images[j], 0, heightCurr, null);
+       heightCurr += images[j].getHeight();
+    }
+    g2d.dispose();
+    //---------------------------------------------------------------------------------------------------
+    BufferedImage images2[] = new BufferedImage[tileWidth];
+    for(int j = 0; j < images2.length; j++) {
+       images2[j] = concatImage;
+    }
+    int heightTotal2 = 0;
+    for(int j = 0; j < images2.length; j++) {
+       heightTotal2 += images2[j].getWidth();
+    }
+
+    int heightCurr2 = 0;
+    concatImage2 = new BufferedImage(heightTotal2, heightTotal, BufferedImage.TYPE_INT_RGB);
+    Graphics2D g2d2 = concatImage2.createGraphics();
+    for(int j = 0; j < images2.length; j++) {
+       g2d2.drawImage(images2[j], heightCurr2, 0, null);
+       heightCurr2 += images2[j].getWidth();
+    }
+    g2d2.dispose();
+    //--------------------------------------------------------------------------------------------------------------------
+    concatImage2 = convertToARGB(concatImage2);
+    for(int y = 0;y < concatImage2.getHeight(); y++){
+      for(int x = 0;x < concatImage2.getWidth(); x++){
+        if(y + lowy < findy(x+ lowx)){
+          int mc = (0 << 24) | 0x00ffffff;
+          int pixel = concatImage2.getRGB(x, y);
+          int newcolor = pixel & mc;
+          concatImage2.setRGB(x, y, newcolor);
+        }
+      }
+    }
   }
   public int findy(int x){
     if (type == 0){
@@ -118,8 +183,10 @@ public class ground{
     if(type == 0){
       g.drawImage(concatImage2, (int)(left - x + 250), (int)(top), observer);
     }
+    if(type == 1){
+      g.drawImage(concatImage2, (int)(lowx - x + 250), (int)(lowy), observer);
+    }
   }
-  //checks if the player is colliding with the collision box and checks if the player is standing on ground(for jump checks)
   public void checkCollision(player p){
     if(type == 0){
       if (left < p.right && right > p.left && top < p.bottom && bottom > p.top){
@@ -196,7 +263,6 @@ public class ground{
       }
       if(p.right > startx && p.right - 1 < endx){
         if(p.bottom > findy((int)p.right)){
-          //System.out.println("colliding with slope");
           p.posy = findy((int)p.right) - (p.height / 2);
           p.setvel(p.velx, 0);
           p.isOnGround = true;

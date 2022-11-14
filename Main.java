@@ -6,7 +6,7 @@ import javax.imageio.ImageIO;
 
 class Main {
 
-    private static void initWindow() {
+    private static void initWindow(int skip) {
         // create a window frame and set the title in the toolbar
         JFrame window = new JFrame("Sonic Prism");
         try {
@@ -19,6 +19,9 @@ class Main {
         // create the jpanel to draw on.
         // this also initializes the game loop
         Window board = new Window();
+        if(skip == 1){
+          board.opening = 149;
+        }
         // add the jpanel to the window
         window.add(board);
         // pass keyboard inputs to the jpanel
@@ -31,12 +34,9 @@ class Main {
         window.pack();
         // open window in the center of the screen
         window.setLocationRelativeTo(null);
-
-
         // display the window
         window.setVisible(true);
     }
-
     public static void main(String[] args) {
         // invokeLater() is used here to prevent our graphics processing from
         // blocking the GUI. https://stackoverflow.com/a/22534931/4655368
@@ -44,7 +44,15 @@ class Main {
         // just know that when main runs it will call initWindow() once.
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                initWindow();
+              if(args.length > 0){
+                if(Integer.parseInt(args[0]) == 1){
+                  initWindow(1);
+                }else{
+                  initWindow(0);
+                }
+              }else{
+                initWindow(0);
+              }
             }
         });
     }

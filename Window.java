@@ -13,46 +13,28 @@ import java.util.Date;
 public class Window extends JPanel implements ActionListener, KeyListener, MouseListener {
     // suppress serialization warning
     private static final long serialVersionUID = 490905409104883233L;
-    public boolean up;
-    public boolean down;
-    public boolean left;
-    public boolean right;
-    public boolean space;
-    public boolean alt;
-    public boolean ctrl;
-    public boolean shift;
-    public Timer timer;
-    public player Player;
-    public int mousex;
-    public int mousey;
-    private int opening = 0;
-    public boolean isInGame;
-    public ground[][] obstacle = new ground[1][3];
-    private BufferedImage inImage;
-    private BufferedImage outImage;
+    public boolean up, down, left, right, space, alt, ctrl, shift, fading, isInGame;
+    public int mousex, mousey;
+    public int opening = 0;
     private float alpha = 0f;
     private long startTime = -1;
-    public boolean fading;
-    public  Timer timer2;
+    public player Player;
+    public ground[] obstacle = new ground[3];
+    public Timer timer, timer2;
+    private BufferedImage inImage, outImage;
     public Window() {
-        // set the game board size
         setPreferredSize(new Dimension(500, 500));
-        // set the game board background color
         setBackground(new Color(173, 216, 230));
         Player = new player();
         Player.setsize(43,43);
-        // this timer will call the actionPerformed() method every 25 ms
         timer = new Timer(25, this);
         timer.start();
 
         addMouseListener(this);
 
-        obstacle[0][2] = new ground();
-        obstacle[0][2].setCollision(100, 100, 996, 196);
-        obstacle[0][1] = new ground();
-        obstacle[0][1].setCollision(-988, 200, 100, 296);
-        obstacle[0][0] = new ground();
-        obstacle[0][0].setSlope(0, 200, 100, 100);
+        obstacle[0] = new ground(1, new int[] {4, 200, 100, 104});
+        obstacle[1] = new ground(0, new int[] {-988, 200, 100, 296});
+        obstacle[2] = new ground(0, new int[] {100, 104, 996, 200});
         try{
             inImage = ImageIO.read(new File("assets/Sonic_Prism_Logo.png"));
             outImage = ImageIO.read(new File("assets/main menu.png"));
@@ -93,8 +75,8 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
         Player.tick();
         Player.isOnGround = false;
         Player.isOnSlope = false;
-        for(int x = 0; x < obstacle[0].length; x++){
-          obstacle[0][x].checkCollision(Player);
+        for(int x = 0; x < obstacle.length; x++){
+          obstacle[x].checkCollision(Player);
         }
         Player.input(up, left, down, right, space, shift);
         }
@@ -114,8 +96,8 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
         // draw our graphics.
           drawBackground(g);
           Player.draw(g, this);
-          for(int x = 0; x < obstacle[0].length; x++){
-            obstacle[0][x].draw(g, this, (int)Player.posx);
+          for(int x = 0; x < obstacle.length; x++){
+            obstacle[x].draw(g, this, (int)Player.posx);
           }
         }else{
           opening++;
@@ -178,12 +160,12 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 //name is a bit misleading. this method actually just draws the ground peices
     private void drawBackground(Graphics g) {
         g.setColor(new Color(255, 216, 230));
-        for(int x = 0; x < obstacle[0].length; x++){
-          if(obstacle[0][x].type == 0){
-            g.fillRect(obstacle[0][x].left - (int)Player.posx + 250,obstacle[0][x].top,obstacle[0][x].right - obstacle[0][x].left,obstacle[0][x].bottom - obstacle[0][x].top);
+        for(int x = 0; x < obstacle.length; x++){
+          if(obstacle[x].type == 0){
+            g.fillRect(obstacle[x].left - (int)Player.posx + 250,obstacle[x].top,obstacle[x].right - obstacle[x].left,obstacle[x].bottom - obstacle[x].top);
           }
-          else if(obstacle[0][x].type == 1){
-            g.fillPolygon(new int[] {obstacle[0][x].startx - (int)Player.posx + 250, obstacle[0][x].endx - (int)Player.posx + 250, obstacle[0][x].highx - (int)Player.posx + 250}, new int[] {obstacle[0][x].starty, obstacle[0][x].endy, obstacle[0][x].highy}, 3);
+          else if(obstacle[x].type == 1){
+            g.fillPolygon(new int[] {obstacle[x].startx - (int)Player.posx + 250, obstacle[x].endx - (int)Player.posx + 250, obstacle[x].highx - (int)Player.posx + 250}, new int[] {obstacle[x].starty, obstacle[x].endy, obstacle[x].highy}, 3);
           }
         }
     }
