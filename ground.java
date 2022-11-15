@@ -113,7 +113,6 @@ public class ground{
     starty = y1;
     endx = x2;
     endy = y2;
-    //---------------------------------------------------------------------------------------------
     try {
         image = ImageIO.read(new File("assets/groundTile.png"));
     } catch (IOException exc) {
@@ -138,7 +137,6 @@ public class ground{
        heightCurr += images[j].getHeight();
     }
     g2d.dispose();
-    //---------------------------------------------------------------------------------------------------
     BufferedImage images2[] = new BufferedImage[tileWidth];
     for(int j = 0; j < images2.length; j++) {
        images2[j] = concatImage;
@@ -156,7 +154,6 @@ public class ground{
        heightCurr2 += images2[j].getWidth();
     }
     g2d2.dispose();
-    //--------------------------------------------------------------------------------------------------------------------
     concatImage2 = convertToARGB(concatImage2);
     for(int y = 0;y < concatImage2.getHeight(); y++){
       for(int x = 0;x < concatImage2.getWidth(); x++){

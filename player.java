@@ -10,7 +10,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.Graphics2D;
 public class player{
   public boolean lookingUp, lookingDown, updir, downdir, leftdir, rightdir, facing_left;
-  public boolean isOnGround, isOnSlope = false;
+  public boolean isOnGround, isOnSlope, jumped = false;
   public int stillTimer = 0;
   public int animateIdle, animateRun, animatefast, animateTurn, animateRoll = 0;
   public float termVelx = 15;
@@ -199,11 +199,14 @@ public class player{
   }
   public void tick(){
     setpos(posx + velx, posy + vely);
-    if(vely < -.1){//moving up
+    if(jumped && !isOnGround){
       setimage(971,26,43,43);
       if(facing_left){
         mirror_image();
       }
+    }
+    else if(jumped && isOnGround && vely > -1){
+      jumped = false;
     }
     else if(velx > .5 && !leftdir){//moving right
       if(lookingDown){
@@ -273,10 +276,10 @@ public class player{
     if(posy > 500){
       setpos(posx, 0);
     }
-    if(velx < -4 && velx > -8 && rightdir){
+    if(velx < -4 && velx > -8 && rightdir && isOnGround){
       animate_turn_right();
     }
-    else if(velx > 4 && velx < 8 && leftdir){
+    else if(velx > 4 && velx < 8 && leftdir && isOnGround){
       animate_turn_left();
     }
     else{
@@ -321,6 +324,7 @@ public class player{
         else{
           setvel(velx, vely - (float)7.5);
         }
+        jumped = true;
       }
     }
   }
