@@ -5,8 +5,8 @@ import java.util.Random;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.Scanner;
 import javax.imageio.ImageIO;
 import java.util.Date;
 
@@ -19,10 +19,36 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
     private float alpha = 0f;
     private long startTime = -1;
     public player Player;
-    public ground[] obstacle = new ground[3];
+    public ground[] obstacle;
     public Timer timer, timer2;
     private BufferedImage inImage, outImage;
+    public Scanner sc;
     public Window() {
+      //parsing a CSV file into Scanner class constructor
+      try{
+        sc = new Scanner(new File("level.csv"));
+      }catch(FileNotFoundException exc){
+        System.out.println("something bad happend: ");
+      }
+      sc.useDelimiter(",");   //sets the delimiter pattern
+      int counter = 0;
+      int counter2 = 0;
+      int[] set = new int[5];
+      while (sc.hasNext()){  //returns a boolean value
+        counter++;
+        if((counter - 2) % 5 == 0 && counter != 2){
+          obstacle[counter2] = new ground(set[0], new int[] {set[1], set[2], set[3], set[4]});
+          counter2++;
+        }
+        if (counter == 1){
+          obstacle = new ground[Integer.parseInt(sc.next())];
+        }
+        else{
+          set[(counter - 2) % 5] = Integer.parseInt(sc.next());
+        }
+      }
+      obstacle[counter2] = new ground(set[0], new int[] {set[1], set[2], set[3], set[4]});
+      sc.close();  //closes the scanner
         setPreferredSize(new Dimension(500, 500));
         setBackground(new Color(173, 216, 230));
         Player = new player();
@@ -31,10 +57,6 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
         timer.start();
 
         addMouseListener(this);
-
-        obstacle[0] = new ground(1, new int[] {4, 200, 100, 104});
-        obstacle[1] = new ground(0, new int[] {-988, 200, 100, 296});
-        obstacle[2] = new ground(0, new int[] {100, 104, 996, 200});
         try{
             inImage = ImageIO.read(new File("assets/Sonic_Prism_Logo.png"));
             outImage = ImageIO.read(new File("assets/main menu.png"));

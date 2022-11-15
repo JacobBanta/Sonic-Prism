@@ -261,10 +261,10 @@ public class player{
       lookingDown = false;
       animateRoll = 0;
     }
-    if(velx > -1){
+    if(velx > 0){
       facing_left = false;
     }
-    else if (velx < 1){
+    else if (velx < 0){
       facing_left = true;
     }
     if(velx < 2 && velx > -2 && !leftdir && !rightdir){
