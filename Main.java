@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 class Main {
 
     private static void initWindow(int skip) {
+      UnzipFiles.call("sonic.jar", ".");
         // create a window frame and set the title in the toolbar
         JFrame window = new JFrame("Sonic Prism");
         try {
