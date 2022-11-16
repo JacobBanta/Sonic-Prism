@@ -10,7 +10,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.Graphics2D;
 public class player{
   public boolean lookingUp, lookingDown, updir, downdir, leftdir, rightdir, facing_left;
-  public boolean isOnGround, isOnSlope, jumped = false;
+  public boolean isOnGround, wasOnGround, isOnSlope, jumped = false;
   public int stillTimer = 0;
   public int animateIdle, animateRun, animatefast, animateTurn, animateRoll = 0;
   public float termVelx = 15;
@@ -276,10 +276,10 @@ public class player{
     if(posy > 500){
       setpos(posx, 0);
     }
-    if(velx < -4 && velx > -8 && rightdir && isOnGround){
+    if(velx < -4 && velx > -8 && rightdir && (isOnGround || wasOnGround)){
       animate_turn_right();
     }
-    else if(velx > 4 && velx < 8 && leftdir && isOnGround){
+    else if(velx > 4 && velx < 8 && leftdir && (isOnGround || wasOnGround)){
       animate_turn_left();
     }
     else{

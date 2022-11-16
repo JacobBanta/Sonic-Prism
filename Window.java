@@ -93,19 +93,21 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
         // this method is called by the timer every 25 ms.
         // use this space to update the state of your game or animation
         // before the graphics are redrawn.
-        if(isInGame){
+      if(isInGame){
         Player.tick();
+        Player.wasOnGround = Player.isOnGround;
         Player.isOnGround = false;
         Player.isOnSlope = false;
         for(int x = 0; x < obstacle.length; x++){
           obstacle[x].checkCollision(Player);
         }
         Player.input(up, left, down, right, space, shift);
-        }
+      }
         // calling repaint() will trigger paintComponent() to run again,
         // which will refresh/redraw the graphics.
-        if(!(opening >= 150 && opening < 200)){
-        repaint();}
+      if(!(opening >= 150 && opening < 200)){
+        repaint();
+      }
     }
     @Override
     public void paintComponent(Graphics g) {
