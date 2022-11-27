@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>C:\Users\299dell\Desktop\java\sonicPrism\sonicPrism.jar</jar>
+  <outfile>C:\Users\299dell\Desktop\java\sonicPrism\sonicPrism.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl></downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon>C:\Users\299dell\Desktop\java\sonicPrism\bin\assets\Sonic_Prism_Logo.ico</icon>
+  <singleInstance>
+    <mutexName>Sonic Prism</mutexName>
+    <windowTitle>Sonic Prism</windowTitle>
+  </singleInstance>
+  <classPath>
+    <mainClass>Main</mainClass>
+    <cp>Main</cp>
+  </classPath>
+  <jre>
+    <path>%JAVA_HOME%;%PATH%</path>
+    <requiresJdk>false</requiresJdk>
+    <requires64Bit>false</requires64Bit>
+    <minVersion></minVersion>
+    <maxVersion></maxVersion>
+  </jre>
+  <versionInfo>
+    <fileVersion>0.28.0.1</fileVersion>
+    <txtFileVersion>0.28.0</txtFileVersion>
+    <fileDescription>Sonic Prism exe</fileDescription>
+    <copyright>none</copyright>
+    <productVersion>0.28.0.1</productVersion>
+    <txtProductVersion>0.28.0</txtProductVersion>
+    <productName>Sonic Prism</productName>
+    <companyName>github.com/JacobBanta/</companyName>
+    <internalName>Sonic Prism</internalName>
+    <originalFilename>sonic.exe</originalFilename>
+    <trademarks></trademarks>
+    <language>ENGLISH_US</language>
+  </versionInfo>
+  <messages>
+    <startupErr>An error occurred while starting the application.</startupErr>
+    <jreNotFoundErr>This application requires a Java Runtime Environment.</jreNotFoundErr>
+    <jreVersionErr>This application requires a Java Runtime Environment. If you already have one, it may need to be updated.</jreVersionErr>
+    <launcherErr>The registry refers to a nonexistent Java Runtime Environment installation or the runtime is corrupted.</launcherErr>
+    <instanceAlreadyExistsMsg>An application instance is already running.</instanceAlreadyExistsMsg>
+  </messages>
+</launch4jConfig>
