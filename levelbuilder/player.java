@@ -1,13 +1,3 @@
-import java.awt.event.KeyEvent;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-import java.awt.Point;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-import java.awt.geom.AffineTransform;
-import java.awt.Graphics2D;
 public class player{
   public boolean lookingUp, lookingDown, updir, downdir, leftdir, rightdir, facing_left;
   public boolean isOnGround, wasOnGround, isOnSlope, jumped;
@@ -18,7 +8,6 @@ public class player{
   public float width = 1, height = 1;
   public float posx = 0, posy = 0;
   public float velx, vely, top, bottom, left, right;
-  private BufferedImage image;
   public player(){
     animateIdle = animateRun = animatefast = animateTurn = animateRoll = 0;
     isOnGround = wasOnGround = isOnSlope = jumped = false;

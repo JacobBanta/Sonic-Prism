@@ -1,14 +1,10 @@
-import java.awt.event.KeyEvent;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
-import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import java.awt.geom.AffineTransform;
 import java.awt.Graphics2D;
-import java.util.Date;
 public class ground{
   public int top, bottom, left, right, type, startx, starty, endx, endy, highx, highy, lowx, lowy;
   public BufferedImage concatImage2;
@@ -182,90 +178,6 @@ public class ground{
     }
     if(type == 1){
       g.drawImage(concatImage2, (int)(lowx - x + 250), (int)(lowy), observer);
-    }
-  }
-  public void checkCollision(player p){
-    if(type == 0){
-      if (left < p.right && right > p.left && top < p.bottom && bottom > p.top){
-        //System.out.println("colliding with box");
-        if(p.right > left && p.left < left && p.bottom > top && p.top < top){
-          if(p.right - left > p.bottom - top){
-            p.setpos(p.posx, top - p.height / 2);
-            p.setvel(p.velx, 0);
-            p.isOnGround = true;
-          }
-          if(p.right - left < p.bottom - top){
-            p.setpos(left - p.width / 2, p.posy);
-            //p.setvel(0 ,p.vely);
-          }
-        }
-        else if(p.right > left && p.left < left && bottom > p.top && p.bottom > bottom){
-          if(p.right - left > bottom - p.top){
-            p.setpos(p.posx, bottom + p.height / 2);
-            p.setvel(p.velx, 0);
-          }
-          if(p.right - left < bottom - p.top){
-            p.setpos(left - p.width / 2, p.posy);
-            p.setvel(0 ,p.vely);
-          }
-        }
-        else if(right > p.left && p.right > right && p.bottom > top && p.top < top){
-          if(right - p.left > p.bottom - top){
-            p.setpos(p.posx, top - p.height / 2);
-            p.setvel(p.velx, 0);
-            p.isOnGround = true;
-          }
-          if(right - p.left < p.bottom - top){
-            p.setpos(right + p.width / 2, p.posy);
-            //p.setvel(0 ,p.vely);
-          }
-        }
-        else if(right > p.left && p.right > right && bottom > p.top && p.bottom > bottom){
-          if(right - p.left > bottom - p.top){
-            p.setpos(p.posx, bottom + p.height / 2);
-            p.setvel(p.velx, 0);
-          }
-          if(right - p.left < bottom - p.top){
-            p.setpos(right + p.width / 2, p.posy);
-            p.setvel(0 ,p.vely);
-          }
-        }
-        else if(p.right > left && p.left < left){
-          p.setpos(left - p.width / 2, p.posy);
-          p.setvel(0 ,p.vely);
-        }
-        else if(right > p.left && p.right > right){
-          p.setpos(right + p.width / 2, p.posy);
-          p.setvel(0 ,p.vely);
-        }
-        else if(p.bottom > top && p.top < top){
-          p.setpos(p.posx, top - p.height / 2);
-          p.setvel(p.velx, 0);
-          p.isOnGround = true;
-        }
-        else if(bottom > p.top && p.bottom > bottom){
-          p.setpos(p.posx, bottom + p.height / 2);
-          p.setvel(p.velx, 0);
-        }
-      }
-    }
-    else if(type == 1){
-      if(p.left + 1 > startx && p.left < endx){
-        if(p.bottom > findy((int)p.left)){
-          p.posy = findy((int)p.left) - (p.height / 2);
-          p.setvel(p.velx, 0);
-          p.isOnGround = true;
-          p.isOnSlope = true;
-        }
-      }
-      if(p.right > startx && p.right - 1 < endx){
-        if(p.bottom > findy((int)p.right)){
-          p.posy = findy((int)p.right) - (p.height / 2);
-          p.setvel(p.velx, 0);
-          p.isOnGround = true;
-          p.isOnSlope = true;
-        }
-      }
     }
   }
 }
