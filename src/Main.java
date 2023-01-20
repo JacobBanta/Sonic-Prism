@@ -12,7 +12,7 @@ class Main {
         // create a window frame and set the title in the toolbar
         JFrame window = new JFrame("Sonic Prism");
         try {
-          window.setIconImage(ImageIO.read(new File("C:/Windows/Temp/SonicPrism/assets/Sonic_Prism_Logo.png")));
+          window.setIconImage(ImageIO.read(new File(".temp/assets/Sonic_Prism_Logo.png")));
         } catch (IOException exc) {
             System.out.println("Error opening image file: " + exc.getMessage());
         }

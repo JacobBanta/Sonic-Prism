@@ -47,7 +47,7 @@ public class ground{
       right = x2;
     }
     try {
-        image = ImageIO.read(new File("C:/Windows/Temp/SonicPrism/assets/groundTile.png"));
+        image = ImageIO.read(new File(".temp/assets/groundTile.png"));
     } catch (IOException exc) {
         System.out.println("Error opening image file: " + exc.getMessage());
     }
@@ -111,7 +111,7 @@ public class ground{
     endx = x2;
     endy = y2;
     try {
-        image = ImageIO.read(new File("C:/Windows/Temp/SonicPrism/assets/groundTile.png"));
+        image = ImageIO.read(new File(".temp/assets/groundTile.png"));
     } catch (IOException exc) {
         System.out.println("Error opening image file: " + exc.getMessage());
     }
