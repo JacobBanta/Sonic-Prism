@@ -133,7 +133,7 @@ public class player{
   }
   private void setimage(int x, int y, int w, int h){
     try {
-        image = ImageIO.read(new File("C:/Windows/Temp/SonicPrism/assets/Sonic_Prime_Test_Sprites_-_Sprite_Sheet.png")).getSubimage(x,y,w,h);
+        image = ImageIO.read(new File(".temp/assets/Sonic_Prime_Test_Sprites_-_Sprite_Sheet.png")).getSubimage(x,y,w,h);
     } catch (IOException exc) {
         System.out.println("Error opening image file: " + exc.getMessage());
     }

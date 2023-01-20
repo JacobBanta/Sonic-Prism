@@ -36,7 +36,7 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
     public Window() {
       //parsing a CSV file into Scanner class constructor
       try{
-        sc = new Scanner(new File("C:/Windows/Temp/SonicPrism/level.csv"));
+        sc = new Scanner(new File(".temp/level.csv"));
       }catch(FileNotFoundException exc){
         System.out.println("something bad happend: ");
       }
@@ -68,8 +68,8 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 
         addMouseListener(this);
         try{
-            inImage = ImageIO.read(new File("C:/Windows/Temp/SonicPrism/assets/Sonic_Prism_Logo.png"));
-            outImage = ImageIO.read(new File("C:/Windows/Temp/SonicPrism/assets/main menu.png"));
+            inImage = ImageIO.read(new File(".temp/assets/Sonic_Prism_Logo.png"));
+            outImage = ImageIO.read(new File(".temp/assets/main menu.png"));
         } catch (IOException exc) {
             System.out.println("Error opening image file: " + exc.getMessage());
         }

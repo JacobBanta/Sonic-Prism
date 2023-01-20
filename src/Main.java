@@ -8,7 +8,7 @@ import javax.swing.SwingUtilities;
 class Main {
 
     private static void initWindow(int skip) {
-      UnzipFiles.call("sonicPrism.jar", "C:/Windows/Temp/SonicPrism");
+      UnzipFiles.call("Sonic-Prism.jar", ".temp");
         // create a window frame and set the title in the toolbar
         JFrame window = new JFrame("Sonic Prism");
         try {
