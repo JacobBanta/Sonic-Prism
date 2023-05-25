@@ -17,8 +17,10 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
@@ -34,20 +36,22 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 	private float alpha = 0f;
 	private long startTime = -1;
 	public player Player;
-	public ground[] obstacle;
+	private Level level;
 	public Timer timer, timer2;
 	private BufferedImage inImage, outImage;
 	public Scanner sc;
 	private String[] levelNames;
 	private boolean levelSelect;
-	private String levelLocation = System.getenv("temp") + "/SonicPrism/level.csv";
+	private String levelLocation = System.getenv("temp") + "/SonicPrism/level.ser";
+	private ArrayList<BufferedImage> backgroundImages;
 
 	public Window() {
+		level = new Level();
 		levelLocation = System.getenv("temp") + "/SonicPrism/levels/"
 				+ new File(System.getenv("temp") + "/SonicPrism/levels").listFiles(new FileFilter() {
 					@Override
 					public boolean accept(File file) {
-						return file.getName().endsWith(".csv");
+						return file.getName().endsWith(".ser");
 					}
 				})[0].getName();
 		setPreferredSize(new Dimension(500, 500));
@@ -85,6 +89,11 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 				}
 			}
 		});
+		
+		backgroundImages = new ArrayList<>();
+		//TODO: add images
+		// backgroundImages.add(inImage);
+		// backgroundImages.add(outImage);
 	}
 
 	public void loadLevelNames() {
@@ -108,9 +117,7 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 			Player.wasOnGround = Player.isOnGround;
 			Player.isOnGround = false;
 			Player.isOnSlope = false;
-			for (int x = 0; x < obstacle.length; x++) {
-				obstacle[x].checkCollision(Player);
-			}
+			level.checkCollision(Player);
 			Player.input(up, left, down, right, space, shift);
 		}
 		// calling repaint() will trigger paintComponent() to run again,
@@ -131,16 +138,15 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 			// draw our graphics.
 			drawBackground(g);
 			Player.draw(g, this);
-			for (int x = 0; x < obstacle.length; x++) {
-				obstacle[x].draw(g, this, (int) Player.posx);
-			}
+			level.draw(g, (int) Player.posx);
+			
 		} else if (levelSelect) {
 
 			File directory = new File(System.getenv("temp") + "/SonicPrism/levels");
 			File[] csvFiles = directory.listFiles(new FileFilter() {
 				@Override
 				public boolean accept(File file) {
-					return file.getName().endsWith(".csv");
+					return file.getName().endsWith(".ser");
 				}
 			});
 			for (int x = 0; x < csvFiles.length; x++) {
@@ -200,30 +206,21 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void loadLevel() {
-		// parsing a CSV file into Scanner class constructor
+		Level obj = null;
+
 		try {
-			sc = new Scanner(new File(levelLocation));
-		} catch (FileNotFoundException exc) {
-			System.out.println("something bad happend: ");
+			FileInputStream fileIn = new FileInputStream(levelLocation);
+			ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+			obj = (Level) objectIn.readObject();
+			objectIn.close();
+			fileIn.close();
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
 		}
-		sc.useDelimiter(","); // sets the delimiter pattern
-		int counter = 0;
-		int counter2 = 0;
-		int[] set = new int[5];
-		while (sc.hasNext()) { // returns a boolean value
-			counter++;
-			if ((counter - 2) % 5 == 0 && counter != 2) {
-				obstacle[counter2] = new ground(set[0], new int[] { set[1], set[2], set[3], set[4] });
-				counter2++;
-			}
-			if (counter == 1) {
-				obstacle = new ground[Integer.parseInt(sc.next())];
-			} else {
-				set[(counter - 2) % 5] = Integer.parseInt(sc.next());
-			}
+
+		if (obj != null) {
+			level = obj;
 		}
-		obstacle[counter2] = new ground(set[0], new int[] { set[1], set[2], set[3], set[4] });
-		sc.close(); // closes the scanner
 	}
 
 	@Override
@@ -294,7 +291,7 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 			File[] csvFiles = new File(System.getenv("temp") + "/SonicPrism/levels").listFiles(new FileFilter() {
 				@Override
 				public boolean accept(File file) {
-					return file.getName().endsWith(".csv");
+					return file.getName().endsWith(".ser");
 				}
 			});
 			for (int i = 0; i < csvFiles.length; i++) {
@@ -313,22 +310,9 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 			}
 		}
 	}
-
-	// name is a bit misleading. this method actually just draws the ground peices
 	private void drawBackground(Graphics g) {
-		g.setColor(new Color(255, 216, 230));
-		for (int x = 0; x < obstacle.length; x++) {
-			if (obstacle[x].type == 0) {
-				g.fillRect(obstacle[x].left - (int) Player.posx + 250, obstacle[x].top,
-						obstacle[x].right - obstacle[x].left,
-						obstacle[x].bottom - obstacle[x].top);
-			} else if (obstacle[x].type == 1) {
-				g.fillPolygon(
-						new int[] { obstacle[x].startx - (int) Player.posx + 250,
-								obstacle[x].endx - (int) Player.posx + 250,
-								obstacle[x].highx - (int) Player.posx + 250 },
-						new int[] { obstacle[x].starty, obstacle[x].endy, obstacle[x].highy }, 3);
-			}
+		for (int i = 0; i < backgroundImages.size(); i++) {
+			g.drawImage(backgroundImages.get(i), 0 - (int) Player.posx / (i + 2), 0, null);
 		}
 	}
 }
