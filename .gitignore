@@ -1,1 +1,8 @@
 Launch4j*
+src/test.java
+src/SerializableImage.java
+bin/test.class
+bin/SerializableImage.class
+bin/ObjectReader.class
+bin/MyClass.class
+bin/BufferedImageSerializer.class

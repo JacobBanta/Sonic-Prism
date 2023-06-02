@@ -44,8 +44,10 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 	private boolean levelSelect;
 	private String levelLocation = System.getenv("temp") + "/SonicPrism/level.ser";
 	private ArrayList<BufferedImage> backgroundImages;
+	private Enemy enemy;
 
 	public Window() {
+		enemy = new Masher_Gabuccho(300, 100, 0);
 		level = new Level();
 		levelLocation = System.getenv("temp") + "/SonicPrism/levels/"
 				+ new File(System.getenv("temp") + "/SonicPrism/levels").listFiles(new FileFilter() {
@@ -139,6 +141,7 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 			drawBackground(g);
 			Player.draw(g, this);
 			level.draw(g, (int) Player.posx);
+			enemy.draw(g, (int) Player.posx);
 			
 		} else if (levelSelect) {
 

@@ -16,7 +16,6 @@ public class Ground  implements Serializable{
 	public int top, bottom, left, right, type, startx, starty, endx, endy, highx, highy, lowx, lowy;
 	private transient BufferedImage concatImage2;
 	private transient BufferedImage image;
-	
 	private byte[] imageData;
 	private byte[] concatImage2Data;
 
