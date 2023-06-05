@@ -57,9 +57,9 @@ public class Ground  implements Serializable{
 			right = x2;
 		}
 		try {
-			image = ImageIO.read(new File(System.getenv("temp") + "/SonicPrism/assets/groundTile.png"));
+			image = ImageIO.read(new File(".temp/assets/groundTile.png"));
 		} catch (IOException exc) {
-			System.out.println("Error opening image file: " + exc.getMessage());
+			System.out.println("Error opening ground image file: " + exc.getMessage());
 		}
 		int tileHeight = (int) ((bottom - top) / 32);
 		int tileWidth = (int) ((right - left) / 32);
@@ -120,9 +120,9 @@ public class Ground  implements Serializable{
 		endx = x2;
 		endy = y2;
 		try {
-			image = ImageIO.read(new File(System.getenv("temp") + "/SonicPrism/assets/groundTile.png"));
+			image = ImageIO.read(new File(".temp/assets/groundTile.png"));
 		} catch (IOException exc) {
-			System.out.println("Error opening image file: " + exc.getMessage());
+			System.out.println("Error opening ground image file: " + exc.getMessage());
 		}
 		int tileHeight = (int) ((highy - lowy) / 32);
 		int tileWidth = (int) ((highx - lowx) / 32);

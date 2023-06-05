@@ -67,7 +67,7 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 			inImage = ImageIO.read(new File(".temp/assets/Sonic_Prism_Logo.png"));
 			outImage = ImageIO.read(new File(".temp/assets/main menu.png"));
 		} catch (IOException exc) {
-			System.out.println("Error opening image file: " + exc.getMessage());
+			System.out.println("Error opening logo image file: " + exc.getMessage());
 		}
 		timer2 = new Timer(0, new ActionListener() {// crates new timer
 			@Override
@@ -145,15 +145,19 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 			
 		} else if (levelSelect) {
 
-			File directory = new File(System.getenv("temp") + "/SonicPrism/levels");
+			File directory = new File(".temp/levels");
 			File[] csvFiles = directory.listFiles(new FileFilter() {
 				@Override
 				public boolean accept(File file) {
 					return file.getName().endsWith(".ser");
 				}
 			});
-			for (int x = 0; x < csvFiles.length; x++) {
-				drawtext(g, 50, x * 50, csvFiles[x].getName());
+			if(csvFiles != null){
+				for (int x = 0; x < csvFiles.length; x++) {
+					drawtext(g, 50, x * 50, csvFiles[x].getName());
+				}
+			}else{
+				drawtext(g, 50, 50, "no levels :(");
 			}
 		} else {
 			opening++;
@@ -291,7 +295,7 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 		int x = e.getX();
 		int y = e.getY();
 		if (levelSelect) {
-			File[] csvFiles = new File(System.getenv("temp") + "/SonicPrism/levels").listFiles(new FileFilter() {
+			File[] csvFiles = new File(".temp/levels").listFiles(new FileFilter() {
 				@Override
 				public boolean accept(File file) {
 					return file.getName().endsWith(".ser");
@@ -299,7 +303,7 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 			});
 			for (int i = 0; i < csvFiles.length; i++) {
 				if (y > i * 50 && y < i * 50 + 50) {
-					levelLocation = System.getenv("temp") + "/SonicPrism/levels/" + csvFiles[i].getName();
+					levelLocation = ".temp/levels/" + csvFiles[i].getName();
 					levelSelect = false;
 				}
 			}

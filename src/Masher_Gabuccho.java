@@ -17,7 +17,7 @@ public class Masher_Gabuccho extends Enemy {
 		if (image1 == null) {
 			try {
 				BufferedImage image1 = ImageIO
-						.read(new File(System.getenv("temp") + "/SonicPrism/assets/Buzzsher.png"))
+						.read(new File(".temp/assets/Buzzsher.png"))
 						.getSubimage(194, 27, 24, 32);
 				Masher_Gabuccho.image1 = new BufferedImage(24, 32, BufferedImage.TYPE_INT_ARGB);
 				for (int x = 0; x < image1.getWidth(); x++) {
@@ -30,7 +30,7 @@ public class Masher_Gabuccho extends Enemy {
 					}
 				}
 				BufferedImage image2 = ImageIO
-						.read(new File(System.getenv("temp") + "/SonicPrism/assets/Buzzsher.png"))
+						.read(new File(".temp/assets/Buzzsher.png"))
 						.getSubimage(226, 27, 32, 32);
 				Masher_Gabuccho.image2 = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
 				for (int x = 0; x < image2.getWidth(); x++) {
@@ -43,7 +43,7 @@ public class Masher_Gabuccho extends Enemy {
 					}
 				}
 			} catch (IOException exc) {
-				System.out.println("Error opening image file: " + exc.getMessage());
+				System.out.println("Error opening masher image file: " + exc.getMessage());
 			}
 		}
 	}
