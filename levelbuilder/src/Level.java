@@ -14,6 +14,10 @@ public class Level implements java.io.Serializable{
 	public void addGround(Ground g) {
 		ground.add(g);
 	}
+	
+	public void addEnemy(Enemy e) {
+		enemies.add(e);
+	}
 
 	public void remove() {
 		ground.remove(ground.size() - 1);
@@ -24,19 +28,15 @@ public class Level implements java.io.Serializable{
 	}
 
 	public void draw(Graphics g, int x) {
-		for (Ground gr : ground) {
-			gr.draw(g, null, x);
+		if(ground != null){
+			for (Ground gr : ground) {
+				gr.draw(g, null, x);
+			}
 		}
 		if(enemies != null){
 			for(Enemy e : enemies){
 				e.draw(g, x);
 			}
-		}
-	}
-	
-	public void checkCollision(player p) {
-		for (Ground g : ground) {
-			g.checkCollision(p);
 		}
 	}
 }

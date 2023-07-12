@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.lang.Thread;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -41,14 +42,15 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 	private BufferedImage inImage, outImage;
 	public Scanner sc;
 	private String[] levelNames;
-	private boolean levelSelect;
+	private boolean levelSelect, titleCard;
 	private ArrayList<BufferedImage> backgroundImages;
-	private Enemy enemy;
 	private String levelLocation = ".temp/level.ser";
+	private ArrayList<BufferedImage> titleCards;
+	private long titleCardStart;
+	private int titleCardPhase;
 
 	public Window() {
 		level = new Level();
-		enemy = new Masher_Gabuccho(300, 100, 0);
 		levelLocation = ".temp/levels/"
 				+ new File(".temp/levels").listFiles(new FileFilter() {
 					@Override
@@ -136,13 +138,45 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 		// because Component implements the ImageObserver interface, and JPanel
 		// extends from Component. So "this" Board instance, as a Component, can
 		// react to imageUpdate() events triggered by g.drawImage()
-		if (isInGame) {
+		if(titleCard){
+			if(titleCards == null){
+				titleCards = new ArrayList<>();
+				try{
+					for(int x = 1; x <= 3; x++){
+						titleCards.add(ImageIO.read(new File(".temp/assets/title-cards/"+x+".png")));
+					}
+					for(int x = 1; x <= 16; x++){
+						titleCards.add(ImageIO.read(new File(".temp/assets/title-cards/1_"+x+".png")));
+					}
+				} catch (IOException exc) {
+					System.out.println("Error opening title cards: " + exc.getMessage());
+				}
+			}
+			// Create a BufferedImage with the desired dimensions and color model
+			BufferedImage tempImage = new BufferedImage(320, 224, BufferedImage.TYPE_INT_ARGB);
+			
+			// Obtain a Graphics2D object from the BufferedImage
+			Graphics2D g2d = tempImage.createGraphics();
+			
+			g2d.create(0, 0, 320, 224);
+			g2d.drawImage(titleCards.get(0), 0 - titleCardPhase % 32 + 32, 0 + titleCardPhase % 32 - 32, null);
+			g2d.drawImage(titleCards.get(1), 0, 0, null);
+			g2d.drawImage(titleCards.get(2), 0, titleCardPhase % 32, null);
+			g2d.drawImage(titleCards.get(2), 0, titleCardPhase % 32 - 224, null);
+			g2d.drawImage(titleCards.get(3 + titleCardPhase++ % 16), 0, 0, null);
+			g2d.drawString(levelLocation.substring(levelLocation.lastIndexOf("/") + 1, levelLocation.lastIndexOf(".")), 200, 150);
+			g2d.dispose();
+			g.drawImage(tempImage, 0, 0, 500, 500, null);
+			//if(titleCardPhase == 16)
+				//titleCardPhase = 0;
+			if(System.currentTimeMillis() > titleCardStart + 5000){
+				titleCard = false;
+			}
+		}else if (isInGame) {
 			// draw our graphics.
 			drawBackground(g);
 			Player.draw(g, this);
 			level.draw(g, (int) Player.posx);
-			enemy.draw(g, (int) Player.posx);
-			
 		} else if (levelSelect) {
 
 			File directory = new File(".temp/levels");
@@ -213,8 +247,8 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void loadLevel() {
+		playTitleCard();
 		Level obj = null;
-
 		try {
 			FileInputStream fileIn = new FileInputStream(levelLocation);
 			ObjectInputStream objectIn = new ObjectInputStream(fileIn);
@@ -321,5 +355,9 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 		for (int i = 0; i < backgroundImages.size(); i++) {
 			g.drawImage(backgroundImages.get(i), 0 - (int) Player.posx / (i + 2), 0, null);
 		}
+	}
+	public void playTitleCard(){
+		titleCard = true; 
+		titleCardStart = System.currentTimeMillis();
 	}
 }

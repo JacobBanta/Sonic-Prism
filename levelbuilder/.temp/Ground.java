@@ -6,14 +6,14 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-public class ground{
+public class Ground{
   public int top, bottom, left, right, type, startx, starty, endx, endy, highx, highy, lowx, lowy;
   public BufferedImage concatImage2;
   private BufferedImage image;
-  public ground(){
+  public Ground(){
 
   }
-  public ground(int type, int[] points){
+  public Ground(int type, int[] points){
     if(type == 0 && points.length == 4){
       setCollision(points[0], points[1], points[2], points[3]);
     }

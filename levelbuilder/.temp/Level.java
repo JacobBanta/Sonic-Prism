@@ -27,10 +27,8 @@ public class Level implements java.io.Serializable{
 		for (Ground gr : ground) {
 			gr.draw(g, null, x);
 		}
-		if(enemies != null){
-			for(Enemy e : enemies){
-				e.draw(g, x);
-			}
+		for(Enemy e : enemies){
+			e.draw(g, x);
 		}
 	}
 	

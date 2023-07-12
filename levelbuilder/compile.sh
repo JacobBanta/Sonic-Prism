@@ -6,7 +6,7 @@ javac Enemy.java
 javac ImageTools.java
 javac Level.java
 javac Masher_Gabuccho.java
-javac ground.java
+javac Ground.java
 javac UnzipFiles.java
 jar -cmf MANIFEST.MF levelbuilder.jar ./**
 cp -f levelbuilder.jar ..

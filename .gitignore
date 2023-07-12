@@ -8,4 +8,5 @@ bin/MyClass.class
 bin/BufferedImageSerializer.class
 
 .temp/*
+src/.temp/*
 *.swp

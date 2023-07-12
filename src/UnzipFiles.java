@@ -17,6 +17,7 @@ public class UnzipFiles {
 
 	private static void unzip(String zipFilePath, String destDir) {
 		File dir = new File(destDir);
+		System.out.println(dir);
 		// create output directory if it doesn't exist
 		if (!dir.exists())
 			dir.mkdirs();
@@ -30,8 +31,7 @@ public class UnzipFiles {
 			while (ze != null) {
 				if (!ze.isDirectory()) {
 					String fileName = ze.getName();
-					if (!(getExtension(fileName).matches(".class") || getExtension(fileName).matches(".MF"))
-							&& (!(new File(fileName)).exists())) {
+					if (!(getExtension(fileName).matches(".class") || getExtension(fileName).matches(".MF"))) {
 						File newFile = new File(destDir + File.separator + fileName);
 						// System.out.println("Unzipping to "+newFile.getAbsolutePath());
 						// create directories for sub directories in zip
