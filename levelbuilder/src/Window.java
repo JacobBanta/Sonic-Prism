@@ -13,6 +13,13 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -25,9 +32,9 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 	public int opening = 0;
 	public int[] currentGround = new int[5];
 	public player Player;
-	public ground[] obstacle;
 	public Timer timer, timer2;
 	public Scanner sc;
+	public Level level;
 
 	public Window() {
 		loadLevel();
@@ -60,9 +67,7 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 		// react to imageUpdate() events triggered by g.drawImage()
 		// draw our graphics.
 		drawBackground(g);
-		for (int x = 0; x < obstacle.length; x++) {
-			obstacle[x].draw(g, this, (int) Player.posx);
-		}
+		level.draw(g, (int)Player.posx);
 		// this smooths out animations on some systems
 		Toolkit.getDefaultToolkit().sync();
 	}
@@ -85,7 +90,8 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 			space = false;
 		if (e.getKeyCode() == 16) {
 			shift = false;
-			obstacle = new ground[0];
+			level = new Level();
+			System.out.println("cleared");
 		}
 		if (e.getKeyCode() == 17) {
 			ctrl = false;
@@ -93,28 +99,7 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 		}
 		if (e.getKeyCode() == 18) {
 			alt = false;
-			try {
-				FileWriter myWriter = new FileWriter("level.csv");
-				FileWriter myWritertemp = new FileWriter("C:/Windows/Temp/sonicPrism/level.csv");
-				String str = String.valueOf(obstacle.length);
-				for (int x = 0; x < obstacle.length; x++) {
-					if (obstacle[x].type == 0) {
-						str = str + "," + obstacle[x].type + "," + obstacle[x].left + "," + obstacle[x].top + ","
-								+ obstacle[x].right + "," + obstacle[x].bottom;
-					} else if (obstacle[x].type == 1) {
-						str = str + "," + obstacle[x].type + "," + obstacle[x].startx + "," + obstacle[x].starty + ","
-								+ obstacle[x].endx + "," + obstacle[x].endy;
-					}
-				}
-				myWritertemp.write(str);
-				myWritertemp.close();
-				myWriter.write(str);
-				myWriter.close();
-				System.out.println("saved level");
-			} catch (IOException eee) {
-				System.out.println("An error occurred.");
-				eee.printStackTrace();
-			}
+			saveLevel();
 		}
 	}
 
@@ -208,36 +193,17 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void addObstacle(int[] append) {
-		ground[] newobstacle = new ground[obstacle.length + 1];
-		for (int x = 0; x < obstacle.length; x++) {
-			newobstacle[x] = obstacle[x];
-		}
-		newobstacle[obstacle.length] = new ground(append[0], new int[] { append[1], append[2], append[3], append[4] });
-		obstacle = newobstacle;
+		level.addGround(new Ground(append[0], new int[] { append[1], append[2], append[3], append[4] }));
 	}
 
 	public void replaceObstacle(int[] append) {
-		ground[] newobstacle = new ground[obstacle.length];
-		for (int x = 0; x < obstacle.length; x++) {
-			newobstacle[x] = obstacle[x];
-		}
-		newobstacle[obstacle.length - 1] = new ground(append[0], new int[] { append[1], append[2], append[3], append[4] });
-		obstacle = newobstacle;
+		level.remove();
+		level.addGround(new Ground(append[0], new int[] { append[1], append[2], append[3], append[4] }));
 	}
 
 	// name is a bit misleading. this method actually just draws the ground peices
 	private void drawBackground(Graphics g) {
 		g.setColor(new Color(255, 216, 230));
-		for (int x = 0; x < obstacle.length; x++) {
-			if (obstacle[x].type == 0) {
-				g.fillRect(obstacle[x].left - (int) Player.posx + 250, obstacle[x].top,
-						obstacle[x].right - obstacle[x].left, obstacle[x].bottom - obstacle[x].top);
-			} else if (obstacle[x].type == 1) {
-				g.fillPolygon(new int[] { obstacle[x].startx - (int) Player.posx + 250,
-						obstacle[x].endx - (int) Player.posx + 250, obstacle[x].highx - (int) Player.posx + 250 },
-						new int[] { obstacle[x].starty, obstacle[x].endy, obstacle[x].highy }, 3);
-			}
-		}
 		for (int x = 0; x < 532; x++) {
 			if (x % 32 == 27) {
 				g.drawLine(x - (int) Player.posx % 32, 0, x - (int) Player.posx % 32, 500);
@@ -250,30 +216,40 @@ public class Window extends JPanel implements ActionListener, KeyListener, Mouse
 		}
 	}
 
+	
 	public void loadLevel() {
-		// parsing a CSV file into Scanner class constructor
+		Level obj = null;
+
 		try {
-			sc = new Scanner(new File("C:/Windows/Temp/sonicPrism/level.csv"));
-		} catch (FileNotFoundException exc) {
-			System.out.println("something bad happend: ");
-		}
-		sc.useDelimiter(","); // sets the delimiter pattern
-		int counter = 0;
-		int counter2 = 0;
-		int[] set = new int[5];
-		while (sc.hasNext()) { // returns a boolean value
-			counter++;
-			if ((counter - 2) % 5 == 0 && counter != 2) {
-				obstacle[counter2] = new ground(set[0], new int[] { set[1], set[2], set[3], set[4] });
-				counter2++;
+			FileInputStream fileIn;
+			if((new File("./level.ser")).exists()){
+				fileIn = new FileInputStream("./level.ser");
+			}else{
+				fileIn = new FileInputStream(".temp/level.ser");
 			}
-			if (counter == 1) {
-				obstacle = new ground[Integer.parseInt(sc.next())];
-			} else {
-				set[(counter - 2) % 5] = Integer.parseInt(sc.next());
-			}
+			ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+			obj = (Level) objectIn.readObject();
+			objectIn.close();
+			fileIn.close();
+			System.out.println("loaded");
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
 		}
-		obstacle[counter2] = new ground(set[0], new int[] { set[1], set[2], set[3], set[4] });
-		sc.close(); // closes the scanner
+
+		if (obj != null) {
+			level = obj;
+		}
+	}
+	public void saveLevel(){
+		try {
+			FileOutputStream fileOut = new FileOutputStream("./level.ser");
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			out.writeObject(level);
+			out.close();
+			fileOut.close();
+			System.out.println("saved");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

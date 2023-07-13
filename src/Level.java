@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 public class Level implements java.io.Serializable{
 	private ArrayList<Ground> ground;
+	private ArrayList<Enemy> enemies;
 
 	private static final long serialVersionUID = 1L;
 
@@ -25,6 +26,11 @@ public class Level implements java.io.Serializable{
 	public void draw(Graphics g, int x) {
 		for (Ground gr : ground) {
 			gr.draw(g, null, x);
+		}
+		if(enemies != null){
+			for(Enemy e : enemies){
+				e.draw(g, x);
+			}
 		}
 	}
 	

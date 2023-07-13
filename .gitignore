@@ -6,3 +6,6 @@ bin/SerializableImage.class
 bin/ObjectReader.class
 bin/MyClass.class
 bin/BufferedImageSerializer.class
+
+**/.temp/*
+*.swp

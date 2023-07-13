@@ -43,7 +43,7 @@ public class Masher_Gabuccho extends Enemy {
 					}
 				}
 			} catch (IOException exc) {
-				System.out.println("Error opening image file: " + exc.getMessage());
+				System.out.println("Error opening masher image file: " + exc.getMessage());
 			}
 		}
 	}
