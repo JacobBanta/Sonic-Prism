@@ -13,7 +13,7 @@ public class UnzipFiles {
 
 	private static String getExtension(String filename) {
 		return filename.substring(filename.lastIndexOf("."));
-	}
+	} 
 
 	private static void unzip(String zipFilePath, String destDir) {
 		File dir = new File(destDir);

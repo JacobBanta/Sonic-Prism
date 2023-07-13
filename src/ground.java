@@ -21,7 +21,7 @@ public class Ground  implements Serializable{
 
 	private static final long serialVersionUID = 2L;
 
-	public Ground(int type, int[] points) {
+	public Ground(int type, int[] points) { 
 		if (type == 0 && points.length == 4) {
 			setCollision(points[0], points[1], points[2], points[3]);
 		}

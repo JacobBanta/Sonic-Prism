@@ -22,10 +22,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.lang.Thread;
-
 import javax.imageio.ImageIO;
-import javax.swing.JPanel;
+import javax.swing.JPanel; 
 import javax.swing.Timer;
 
 public class Window extends JPanel implements ActionListener, KeyListener, MouseListener {

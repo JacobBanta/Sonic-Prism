@@ -27,7 +27,7 @@ public class player {
 
 	private void loadImage() {
 		setimage(9, 26, 43, 43);
-	}
+	} 
 
 	private void animate_run() {
 		if (isOnSlope) {
